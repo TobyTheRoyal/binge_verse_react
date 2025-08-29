@@ -11,24 +11,25 @@ import History from './features/History/History';
 import Profile from './features/Profile';
 import Reviews from './features/Reviews';
 
-interface RouteConfig {
+export interface RouteConfig {
   path: string;
   Component: React.FC;
+  requiresAuth?: boolean;
 }
 
 const routes: RouteConfig[] = [
   { path: '/', Component: Home },
   { path: '/auth/register', Component: Register },
   { path: '/auth/login', Component: Login },
-  { path: '/watchlist', Component: Watchlist },
-  { path: '/movies', Component: Movies },
-  { path: '/movies/:id', Component: MovieDetail },
-  { path: '/series', Component: Series },
-  { path: '/series/:id', Component: SeriesDetail },
-  { path: '/ratings', Component: Rating },
-  { path: '/history', Component: History },
-  { path: '/profile', Component: Profile },
-  { path: '/reviews', Component: Reviews },
+  { path: '/watchlist', Component: Watchlist, requiresAuth: true },
+  { path: '/movies', Component: Movies, requiresAuth: true },
+  { path: '/movies/:id', Component: MovieDetail, requiresAuth: true },
+  { path: '/series', Component: Series, requiresAuth: true },
+  { path: '/series/:id', Component: SeriesDetail, requiresAuth: true },
+  { path: '/ratings', Component: Rating, requiresAuth: true },
+  { path: '/history', Component: History, requiresAuth: true },
+  { path: '/profile', Component: Profile, requiresAuth: true },
+  { path: '/reviews', Component: Reviews, requiresAuth: true },
 ];
 
 export default routes;

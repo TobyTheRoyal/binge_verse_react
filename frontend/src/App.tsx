@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import routes from './routes';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import AuthGuard from './components/AuthGuard';
 
 const App: React.FC = () => {
   return (
@@ -10,9 +11,16 @@ const App: React.FC = () => {
       <Header />
       <main>
         <Routes>
-          {routes.map(({ path, Component }, idx) => (
-            <Route key={idx} path={path} element={<Component />} />
-          ))}
+          {routes.map(({ path, Component, requiresAuth }, idx) => {
+            const element = requiresAuth ? (
+              <AuthGuard>
+                <Component />
+              </AuthGuard>
+            ) : (
+              <Component />
+            );
+            return <Route key={idx} path={path} element={element} />;
+          })}
         </Routes>
       </main>
       <Footer />
