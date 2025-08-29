@@ -1,0 +1,334 @@
+@use '../../styles/variables';
+@use '../../styles/content-card';
+
+.seriesContainer {
+  background: variables.$primary-color;
+  padding: variables.$spacing-xl;
+  min-height: 100vh;
+  color: variables.$text-color;
+  font-family: variables.$font-family;
+}
+
+.seriesHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: variables.$spacing-xl;
+}
+
+h2 {
+  font-size: variables.$font-size-heading;
+  font-weight: 700;
+  margin: 0;
+  text-align: left;
+  color: variables.$accent-color;
+  text-shadow: 0 0 10px variables.$shadow-color;
+}
+
+.filterActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filterToggleBtn {
+  background: linear-gradient(
+    135deg,
+    variables.$secondary-color,
+    darken(variables.$secondary-color, 10%)
+  );
+  border: 2px solid variables.$accent-color;
+  color: variables.$text-color;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  border-radius: variables.$border-radius-lg;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: variables.$spacing-sm;
+  box-shadow: variables.$shadow-sm;
+  transition: variables.$transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 0, 122, 0.3);
+  }
+
+  &.active {
+    background: linear-gradient(
+      135deg,
+      variables.$accent-color,
+      darken(variables.$accent-color, 15%)
+    );
+    border-color: variables.$accent-color;
+    color: variables.$text-color;
+  }
+
+  .filterIcon {
+    stroke: currentColor;
+  }
+
+  .activeIndicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+  }
+}
+
+.contentList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: variables.$spacing-lg;
+  margin: 0 auto;
+}
+
+/* ========== Card Styles ========== */
+.contentCard {
+  @include content-card.card-base;
+  cursor: pointer;
+
+  .cardImage {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    border-radius: variables.$border-radius-md;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+
+    .addBtn,
+    .ratingBtn {
+      position: absolute;
+      top: 8px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.8);
+        color: #000;
+      }
+    }
+
+    .addBtn {
+      left: 8px;
+    }
+
+    .ratingBtn {
+      right: 8px;
+    }
+  }
+
+  .cardTitle {
+    margin-top: variables.$spacing-sm;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: variables.$text-color;
+    text-align: center;
+  }
+
+  .ratingsContainer {
+    margin-top: variables.$spacing-xs;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #ccc;
+
+    .ratingIcon {
+      width: 18px;
+      height: 18px;
+      margin-right: 4px;
+    }
+
+    .imdbRating,
+    .rtRating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+  }
+}
+
+/* ========== Rating Overlay ========== */
+.ratingOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  z-index: 5;
+}
+
+.ratingInputContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.ratingCard {
+  background: #1f1f1f;
+  border-radius: variables.$border-radius-lg;
+  padding: variables.$spacing-lg;
+  text-align: center;
+  width: 80%;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  position: relative;
+
+  h3 {
+    margin-bottom: variables.$spacing-md;
+    color: #fff;
+    font-size: 1.1rem;
+  }
+
+  .closeBtn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+
+  .ratingInputField {
+    width: 100%;
+    padding: variables.$spacing-sm;
+    border-radius: variables.$border-radius-md;
+    border: 1px solid #444;
+    background: #2a2a2a;
+    color: #fff;
+    font-size: 1rem;
+    margin-bottom: variables.$spacing-md;
+    text-align: center;
+  }
+
+  .submitRatingBtn {
+    background: variables.$accent-color;
+    border: none;
+    border-radius: variables.$border-radius-md;
+    padding: variables.$spacing-sm variables.$spacing-lg;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 600;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: darken(variables.$accent-color, 10%);
+    }
+  }
+}
+
+.ownRatingTag {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: variables.$accent-color;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .starIcon {
+    font-size: 0.9rem;
+  }
+}
+
+/* ========== Loading Indicator ========== */
+.loadingIndicator {
+  text-align: center;
+  color: #fff;
+  padding: 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  .spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid variables.$accent-color;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .seriesContainer {
+    padding: variables.$spacing-md;
+  }
+
+  h2 {
+    font-size: variables.$font-size-subheading;
+  }
+
+  .contentList {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: variables.$spacing-md;
+  }
+
+  .contentCard {
+    .cardImage {
+      height: 200px;
+
+      .addBtn,
+      .ratingBtn {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .cardTitle {
+      font-size: 0.85rem;
+    }
+
+    .ratingsContainer {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .contentList {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .contentCard {
+    .cardImage {
+      height: 180px;
+    }
+
+    .cardTitle {
+      font-size: 0.75rem;
+    }
+
+    .ratingsContainer {
+      font-size: 0.7rem;
+    }
+  }
+}

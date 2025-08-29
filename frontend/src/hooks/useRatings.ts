@@ -1,52 +1,76 @@
-import { useState, useCallback } from 'react';
-import axios from 'axios';
+import { useState, useCallback } from "react";
+import { apiFetch } from "../api/client";
 
-type RatingsMap = Record<string, number>;
-
-interface UseRatingsResult {
-  ratings: RatingsMap;
-  fetchUserRatings: () => Promise<RatingsMap>;
-  rateContent: (contentId: string, rating: number) => Promise<void>;
-  getRating: (contentId: string) => number | undefined;
+export interface RatingItem {
+  content: {
+    id: number;
+    tmdbId: string;
+    type: string;
+  };
+  title?: string;
+  poster?: string;
+  score: number;
+  ratedAt: string;
 }
 
-/**
- * React hook to manage user ratings with caching.
- *
- * @param token Auth token used for API requests.
- */
-export function useRatings(token: string): UseRatingsResult {
-  const [ratings, setRatings] = useState<RatingsMap>({});
+export function useRatings() {
+  const [ratings, setRatings] = useState<RatingItem[]>([]);
+  const [selectedContentId, setSelectedContentId] = useState<number | null>(null);
+  const [selectedContentTitle, setSelectedContentTitle] = useState("");
+  const [ratingScore, setRatingScore] = useState("");
 
-  const authHeader = { Authorization: `Bearer ${token}` };
+  const loadRatings = useCallback(async () => {
+    try {
+      const res = await apiFetch("/api/ratings", { auth: true });
+      const data = await res.json();
+      setRatings(data);
+    } catch (err) {
+      console.error("Failed to load ratings", err);
+    }
+  }, []);
 
-  const fetchUserRatings = useCallback(async () => {
-    const res = await axios.get<RatingsMap>('/api/ratings', {
-      headers: authHeader,
-    });
-    setRatings(res.data);
-    return res.data;
-  }, [token]);
+  const openRatingModal = (contentId: number) => {
+    setSelectedContentId(contentId);
+    const selected = ratings.find((r) => r.content.id === contentId);
+    setSelectedContentTitle(selected?.title ?? "Unknown");
+    setRatingScore(selected ? String(selected.score) : "");
+  };
 
-  const rateContent = useCallback(
-    async (contentId: string, rating: number) => {
-      await axios.post(
-        '/api/ratings',
-        { contentId, rating },
-        { headers: authHeader }
-      );
-      // Update local cache to avoid re-fetching
-      setRatings((prev) => ({ ...prev, [contentId]: rating }));
-    },
-    [token]
-  );
+  const closeRatingModal = () => {
+    setSelectedContentId(null);
+    setSelectedContentTitle("");
+    setRatingScore("");
+  };
 
-  const getRating = useCallback(
-    (contentId: string) => ratings[contentId],
-    [ratings]
-  );
+  const submitRating = async () => {
+    const score = parseFloat(ratingScore);
+    if (isNaN(score) || score < 0 || score > 10) {
+      alert("Score must be between 0.0 and 10.0");
+      return;
+    }
+    try {
+      await apiFetch("/api/ratings", {
+        method: "POST",
+        auth: true,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contentId: selectedContentId, score }),
+      });
+      closeRatingModal();
+      loadRatings();
+    } catch (err) {
+      console.error("Failed to submit rating", err);
+    }
+  };
 
-  return { ratings, fetchUserRatings, rateContent, getRating };
+  return {
+    ratings,
+    loadRatings,
+    selectedContentId,
+    selectedContentTitle,
+    ratingScore,
+    setRatingScore,
+    openRatingModal,
+    closeRatingModal,
+    submitRating,
+  };
 }
-
-export default useRatings;
