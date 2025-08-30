@@ -7,7 +7,7 @@ export interface FilterOptions {
   imdbRatingMin: number;
   rtRatingMin: number;
   providers: string[];
-  userRatingMin?: number;
+  userRatingMin: number;
 }
 
 const defaultFilters: FilterOptions = {
@@ -33,5 +33,17 @@ export function useFilters(initial: FilterOptions = defaultFilters) {
 
   const getFilters = useCallback(() => filters, [filters]);
 
-  return { filters, updateFilters, resetFilters, getFilters };
+  const hasActiveFilters = useCallback(() => {
+  return (
+    filters.genres.length > 0 ||
+    filters.releaseYearMin !== 1900 ||
+    filters.releaseYearMax !== new Date().getFullYear() ||
+    filters.imdbRatingMin > 0 ||
+    filters.rtRatingMin > 0 ||
+    filters.userRatingMin > 0 ||
+    filters.providers.length > 0
+  );
+}, [filters]);
+
+  return { filters, updateFilters, resetFilters, getFilters, hasActiveFilters };
 }

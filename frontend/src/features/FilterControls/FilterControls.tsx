@@ -1,3 +1,4 @@
+// src/components/FilterControls/FilterControls.tsx
 import React, { useEffect, useState } from "react";
 import styles from "./FilterControls.module.scss";
 import { PROVIDERS, providerLogoMap } from "../../constants/providers";
@@ -39,6 +40,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 }) => {
   const [genres, setGenres] = useState<string[]>([]);
 
+  // Genres laden (entspricht Angulars ContentService.getGenres())
   useEffect(() => {
     async function loadGenres() {
       try {
@@ -55,6 +57,28 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     }
     loadGenres();
   }, []);
+
+  // Synchronisation: entspricht Angular ngOnChanges → emitChange()
+  useEffect(() => {
+    onFiltersChange?.({
+      genres: genresSelected,
+      releaseYearMin,
+      releaseYearMax,
+      imdbRatingMin,
+      rtRatingMin,
+      userRatingMin,
+      providers: providersSelected,
+    });
+  }, [
+    genresSelected,
+    releaseYearMin,
+    releaseYearMax,
+    imdbRatingMin,
+    rtRatingMin,
+    userRatingMin,
+    providersSelected,
+    onFiltersChange,
+  ]);
 
   const toggleGenre = (genre: string) => {
     const updated = genresSelected.includes(genre)
@@ -79,6 +103,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 
   return (
     <div className={styles.filterPanelInner}>
+      {/* Genres */}
       <div className={styles.genreColumn}>
         <div className={styles.filterGroup}>
           <label>Genre</label>
@@ -106,6 +131,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
         </div>
       </div>
 
+      {/* Sliders */}
       <div className={styles.sliderColumn}>
         <div className={styles.filterGroup}>
           <label>
@@ -173,37 +199,38 @@ const FilterControls: React.FC<FilterControlsProps> = ({
           />
         </div>
 
+        {/* Providers */}
         <div className={styles.filterGroup}>
-            <label>Provider</label>
-            <div className={styles.providerButtons}>
-              {PROVIDERS.map((p) => (
-                <button
-                  key={p}
-                  onClick={() => toggleProvider(p)}
-                  className={`${styles.providerButton} ${
-                    providersSelected.includes(p) ? styles.active : ""
-                  }`}
-                >
-                  <img
-                    src={getProviderLogoPath(p)}
-                    alt={p}
-                    className={styles.providerLogo}
-                  />
-                </button>
-              ))}
+          <label>Provider</label>
+          <div className={styles.providerButtons}>
+            {PROVIDERS.map((p) => (
               <button
-                onClick={clearProviders}
+                key={p}
+                onClick={() => toggleProvider(p)}
                 className={`${styles.providerButton} ${
-                  providersSelected.length === 0 ? styles.active : ""
+                  providersSelected.includes(p) ? styles.active : ""
                 }`}
               >
-                All
+                <img
+                  src={getProviderLogoPath(p)}
+                  alt={p}
+                  className={styles.providerLogo}
+                />
               </button>
-            </div>
+            ))}
+            <button
+              onClick={clearProviders}
+              className={`${styles.providerButton} ${
+                providersSelected.length === 0 ? styles.active : ""
+              }`}
+            >
+              All
+            </button>
           </div>
-        
+        </div>
       </div>
 
+      {/* Reset */}
       <button
         className={styles.resetBtn}
         onClick={() => {
