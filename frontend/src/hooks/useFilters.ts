@@ -22,6 +22,9 @@ const defaultFilters: FilterOptions = {
 
 export function useFilters(initial: FilterOptions = defaultFilters) {
   const [filters, setFilters] = useState<FilterOptions>(initial);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const toggleFilters = () => setShowFilters((s) => !s);
 
   const updateFilters = useCallback((newFilters: Partial<FilterOptions>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -45,5 +48,13 @@ export function useFilters(initial: FilterOptions = defaultFilters) {
   );
 }, [filters]);
 
-  return { filters, updateFilters, resetFilters, getFilters, hasActiveFilters };
+  return {
+    filters,
+    updateFilters,
+    resetFilters,
+    getFilters,
+    hasActiveFilters,
+    showFilters,
+    toggleFilters,
+  };
 }
