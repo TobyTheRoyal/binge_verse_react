@@ -1,18 +1,14 @@
 services:
-  postgres:
-    image: postgres:14
-    environment:
-      POSTGRES_USER: streamfinder
-      POSTGRES_PASSWORD: securepass
-      POSTGRES_DB: streamfinder
+  mongo:
+    image: mongo:6
     ports:
-      - "5433:5432"
+      - "27017:27017"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mongo-data:/data/db
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U streamfinder"]
+      test: ["CMD-SHELL", "mongosh --eval 'db.adminCommand(\"ping\")' || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,16 +20,12 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      postgres:
+      mongo:
         condition: service_healthy
     env_file:
       - .env
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: streamfinder
-      DB_PASSWORD: securepass
-      DB_DATABASE: streamfinder
+      MONGODB_URI: mongodb://mongo:27017/streamfinder
       TMDB_API_KEY: ${TMDB_API_KEY}
       OMDB_API_KEY: ${OMDB_API_KEY}
       JWT_SECRET: your_jwt_secret
@@ -54,7 +46,7 @@ services:
       - app-network
 
 volumes:
-  pgdata:
+  mongo-data:
 
 networks:
   app-network:
