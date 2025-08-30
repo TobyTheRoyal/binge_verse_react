@@ -2,15 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMovieDetail } from "../../hooks/useMovieDetail";
 import styles from "./MovieDetail.module.scss";
-
-const providerLogoMap: Record<string, string> = {
-  "Netflix": "netflix.svg",
-  "Disney Plus": "disney-plus.svg",
-  "Apple TV+": "apple-tv.svg",
-  "Amazon Prime Video": "prime.svg",
-  "Paramount Plus": "paramount.svg",
-  "Sky Go": "sky.svg",
-};
+import { providerLogoMap } from "../../constants/providers";
 
 const MovieDetail: React.FC = () => {
   const { id } = useParams();

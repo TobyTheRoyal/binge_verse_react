@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./FilterControls.module.scss";
+import { PROVIDERS, providerLogoMap } from "../../constants/providers";
 
 interface FilterOptions {
   genres: string[];
@@ -23,24 +24,6 @@ interface FilterControlsProps {
   onFiltersChange?: (filters: Partial<FilterOptions>) => void;
   onReset?: () => void;
 }
-
-const providers = [
-  "Netflix",
-  "Disney Plus",
-  "Apple TV+",
-  "Amazon Prime Video",
-  "Paramount Plus",
-  "Sky Go",
-];
-
-const providerLogoMap: Record<string, string> = {
-  Netflix: "netflix.svg",
-  "Disney Plus": "disney-plus.svg",
-  "Apple TV+": "apple-tv.svg",
-  "Amazon Prime Video": "prime.svg",
-  "Paramount Plus": "paramount.svg",
-  "Sky Go": "sky.svg",
-};
 
 const FilterControls: React.FC<FilterControlsProps> = ({
   genresSelected,
@@ -191,33 +174,34 @@ const FilterControls: React.FC<FilterControlsProps> = ({
         </div>
 
         <div className={styles.filterGroup}>
-          <label>Provider</label>
-          <div className={styles.providerButtons}>
-            {providers.map((p) => (
+            <label>Provider</label>
+            <div className={styles.providerButtons}>
+              {PROVIDERS.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => toggleProvider(p)}
+                  className={`${styles.providerButton} ${
+                    providersSelected.includes(p) ? styles.active : ""
+                  }`}
+                >
+                  <img
+                    src={getProviderLogoPath(p)}
+                    alt={p}
+                    className={styles.providerLogo}
+                  />
+                </button>
+              ))}
               <button
-                key={p}
-                onClick={() => toggleProvider(p)}
+                onClick={clearProviders}
                 className={`${styles.providerButton} ${
-                  providersSelected.includes(p) ? styles.active : ""
+                  providersSelected.length === 0 ? styles.active : ""
                 }`}
               >
-                <img
-                  src={getProviderLogoPath(p)}
-                  alt={p}
-                  className={styles.providerLogo}
-                />
+                All
               </button>
-            ))}
-            <button
-              onClick={clearProviders}
-              className={`${styles.providerButton} ${
-                providersSelected.length === 0 ? styles.active : ""
-              }`}
-            >
-              All
-            </button>
+            </div>
           </div>
-        </div>
+        
       </div>
 
       <button

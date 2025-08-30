@@ -2,13 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useSeriesDetail } from "../../hooks/useSeriesDetail";
 import styles from "./SeriesDetail.module.scss";
-
-const providerLogoMap: Record<string, string> = {
-  netflix: "netflix.png",
-  prime: "prime.png",
-  disney: "disney.png",
-  // ergänzen…
-};
+import { providerLogoMap } from "../../constants/providers";
 
 const SeriesDetail: React.FC = () => {
   const { id } = useParams();
