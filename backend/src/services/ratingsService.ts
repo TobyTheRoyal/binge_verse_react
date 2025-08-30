@@ -1,11 +1,17 @@
-export class RatingsService {
-  private ratings = new Map<string, number>();
+import { RatingModel, RatingDocument } from '../models/rating';
 
-  setRating(userId: number, tmdbId: string, rating: number) {
-    this.ratings.set(`${userId}:${tmdbId}`, rating);
+  export class RatingsService {
+  async setRating(userId: string, tmdbId: string, rating: number): Promise<RatingDocument> {
+    const doc = await RatingModel.findOneAndUpdate(
+      { userId, tmdbId },
+      { rating },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    ).exec();
+    return doc;
   }
 
-  getRating(userId: number, tmdbId: string): number | undefined {
-    return this.ratings.get(`${userId}:${tmdbId}`);
+  async getRating(userId: string, tmdbId: string): Promise<number | undefined> {
+    const doc = await RatingModel.findOne({ userId, tmdbId }).exec();
+    return doc?.rating;
   }
 }

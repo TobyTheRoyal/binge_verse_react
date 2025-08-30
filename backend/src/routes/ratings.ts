@@ -10,16 +10,19 @@ export const createRatingsRouter = (
 
   router.use(auth);
 
-  router.post('/', (req, res) => {
+  router.post('/', async (req, res) => {
     const user = (req as any).user;
     const { tmdbId, rating } = req.body;
-    ratingsService.setRating(user.id, tmdbId, rating);
+    if (typeof rating !== 'number' || rating < 0 || rating > 10) {
+      return res.status(400).json({ message: 'Rating must be between 0 and 10' });
+    }
+    await ratingsService.setRating(user.id, tmdbId, rating);
     res.status(204).end();
   });
 
-  router.get('/:tmdbId', (req, res) => {
+  router.get('/:tmdbId', async (req, res) => {
     const user = (req as any).user;
-    const rating = ratingsService.getRating(user.id, req.params.tmdbId);
+    const rating = await ratingsService.getRating(user.id, req.params.tmdbId);
     res.json({ rating });
   });
 
