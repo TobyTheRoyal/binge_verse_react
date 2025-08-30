@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { apiFetch } from "../api/client";
+import axiosClient from "../api/axiosClient";
 
 export interface RatingItem {
   content: {
@@ -21,8 +21,7 @@ export function useRatings() {
 
   const loadRatings = useCallback(async () => {
     try {
-      const res = await apiFetch("/api/ratings", { auth: true });
-      const data = await res.json();
+      const { data } = await axiosClient.get('/api/ratings');
       setRatings(data);
     } catch (err) {
       console.error("Failed to load ratings", err);
@@ -49,11 +48,9 @@ export function useRatings() {
       return;
     }
     try {
-      await apiFetch("/api/ratings", {
-        method: "POST",
-        auth: true,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contentId: selectedContentId, score }),
+      await axiosClient.post('/api/ratings', {
+        contentId: selectedContentId,
+        score,
       });
       closeRatingModal();
       loadRatings();

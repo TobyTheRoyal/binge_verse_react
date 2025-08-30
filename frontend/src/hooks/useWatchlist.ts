@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { apiFetch } from "../api/client";
+import axiosClient from "../api/axiosClient";
 import { useAuth } from "./useAuth";
 import { useFilters, FilterOptions } from "./useFilters";
 
@@ -32,8 +32,7 @@ export function useWatchlist() {
   const getWatchlist = useCallback(async () => {
     if (!token) return [];
     try {
-      const res = await apiFetch("/api/watchlist/user", { auth: true });
-      const data = await res.json();
+      const { data } = await axiosClient.get('/api/watchlist/user');
       setAllContents(data);
       return data;
     } catch (err) {
@@ -68,7 +67,7 @@ export function useWatchlist() {
     async (tmdbId: string) => {
       if (!token) return;
       try {
-        await apiFetch(`/api/watchlist/user/${tmdbId}`, { method: "DELETE", auth: true });
+        await axiosClient.delete(`/api/watchlist/user/${tmdbId}`);
         setAllContents((prev) => prev.filter((i) => i.tmdbId !== tmdbId));
       } catch (err) {
         console.error("Failed to remove from watchlist", err);
@@ -95,12 +94,7 @@ export function useWatchlist() {
       return;
     }
     try {
-      await apiFetch("/api/ratings", {
-        method: "POST",
-        auth: true,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tmdbId, score }),
-      });
+      await axiosClient.post('/api/ratings', { tmdbId, score });
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);
     } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiFetch } from "../../api/client"; // dein fetch-wrapper mit auth
+import axiosClient from "../../api/axiosClient";
 import FilterControls from "../FilterControls/FilterControls";
 
 interface RatedContent {
@@ -51,8 +51,7 @@ const History: React.FC = () => {
 
   const loadHistory = useCallback(async () => {
     try {
-      const res = await apiFetch("/ratings", { auth: true });
-      const data: RatedContent[] = await res.json();
+      const { data } = await axiosClient.get<RatedContent[]>("/ratings");
       setHistory(data);
     } catch (err) {
       console.error("Failed to load history", err);
@@ -114,12 +113,7 @@ const History: React.FC = () => {
       return;
     }
     try {
-      await apiFetch("/ratings", {
-        method: "POST",
-        auth: true,
-        body: JSON.stringify({ tmdbId, score }),
-        headers: { "Content-Type": "application/json" },
-      });
+      await axiosClient.post("/ratings", { tmdbId, score });
       setIsRatingSubmitted(true);
       await loadHistory();
       setTimeout(stopRating, 500);

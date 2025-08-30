@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { apiFetch } from "../api/client";
+import axiosClient from "../api/axiosClient";
 
 export interface Movie {
   tmdbId: string;
@@ -50,13 +50,12 @@ export function useMovies() {
     async (pageToLoad: number, replace = false) => {
       setIsLoading(true);
       try {
-        const res = await apiFetch(
-          `/api/movies?page=${pageToLoad}&filters=${encodeURIComponent(
-            JSON.stringify(filters)
-          )}`,
-          { auth: true }
-        );
-        const data = await res.json();
+        const { data } = await axiosClient.get(`/api/movies`, {
+          params: {
+            page: pageToLoad,
+            filters: JSON.stringify(filters),
+          },
+        });
         if (data.length === 0) {
           setHasMore(false);
         } else {
@@ -128,12 +127,7 @@ export function useMovies() {
       return;
     }
     try {
-      await apiFetch("/api/ratings", {
-        method: "POST",
-        auth: true,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tmdbId, score }),
-      });
+      await axiosClient.post('/api/ratings', { tmdbId, score });
       setRatings((prev) => ({ ...prev, [tmdbId]: score }));
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);
@@ -147,14 +141,12 @@ export function useMovies() {
   const isInWatchlist = (id: string) => watchlist.includes(id);
   const toggleWatchlist = async (id: string) => {
     if (isInWatchlist(id)) {
-      await apiFetch(`/api/watchlist/${id}`, { method: "DELETE", auth: true });
+      await axiosClient.delete(`/api/watchlist/${id}`);
       setWatchlist((prev) => prev.filter((x) => x !== id));
     } else {
-      await apiFetch(`/api/watchlist`, {
-        method: "POST",
-        auth: true,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tmdbId: id, type: "movie" }),
+      await axiosClient.post(`/api/watchlist`, {
+        tmdbId: id,
+        type: 'movie',
       });
       setWatchlist((prev) => [...prev, id]);
     }

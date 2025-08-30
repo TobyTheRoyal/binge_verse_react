@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { apiFetch } from "../api/client";
+import axiosClient from "../api/axiosClient";
 
 interface Actor {
   name: string;
@@ -36,18 +36,15 @@ export function useSeriesDetail(id?: string) {
     setIsLoading(true);
     try {
       // 1. Serie laden
-      const res = await apiFetch(`/api/series/${id}`, { auth: true });
-      const data = await res.json();
+      const { data } = await axiosClient.get(`/api/series/${id}`);
       setSeries(data);
 
       // 2. Watchlist Status
-      const wlRes = await apiFetch(`/api/watchlist/user`, { auth: true });
-      const wl = await wlRes.json();
+      const { data: wl } = await axiosClient.get(`/api/watchlist/user`);
       setIsInWL(wl.some((c: any) => c.tmdbId === id));
 
       // 3. Ratings
-      const ratingRes = await apiFetch(`/api/ratings`, { auth: true });
-      const ratings = await ratingRes.json();
+      const { data: ratings } = await axiosClient.get(`/api/ratings`);
       const myRating = ratings.find((r: any) => r.tmdbId === id)?.score ?? null;
       setUserRating(myRating);
     } catch (err) {
@@ -65,17 +62,12 @@ export function useSeriesDetail(id?: string) {
     if (!series) return;
     try {
       if (isInWL) {
-        await apiFetch(`/api/watchlist/user/${series.tmdbId}`, {
-          method: "DELETE",
-          auth: true,
-        });
+        await axiosClient.delete(`/api/watchlist/user/${series.tmdbId}`);
         setIsInWL(false);
       } else {
-        await apiFetch(`/api/watchlist/add`, {
-          method: "POST",
-          auth: true,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tmdbId: series.tmdbId, type: "tv" }),
+        await axiosClient.post(`/api/watchlist/add`, {
+          tmdbId: series.tmdbId,
+          type: 'tv',
         });
         setIsInWL(true);
       }
@@ -100,11 +92,9 @@ export function useSeriesDetail(id?: string) {
       return;
     }
     try {
-      await apiFetch("/api/ratings", {
-        method: "POST",
-        auth: true,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tmdbId: series.tmdbId, score }),
+       await axiosClient.post('/api/ratings', {
+        tmdbId: series.tmdbId,
+        score,
       });
       setIsRatingSubmitted(true);
       setUserRating(score);

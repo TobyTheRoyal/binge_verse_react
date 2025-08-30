@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { apiFetch } from '../api/client';
+import axiosClient from '../api/axiosClient';
 
 interface Credentials {
   email: string;
@@ -19,12 +19,7 @@ export function useAuth() {
   const isLoggedIn = useCallback(() => loggedIn, [loggedIn]);
 
   const login = useCallback(async (creds: Credentials) => {
-    const res = await apiFetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(creds),
-    });
-    const data = await res.json();
+    const { data } = await axiosClient.post('/auth/login', creds);
     if (data.access_token) {
       localStorage.setItem('auth_token', data.access_token);
       setToken(data.access_token);
@@ -33,12 +28,7 @@ export function useAuth() {
   }, []);
 
   const register = useCallback(async (creds: RegisterCredentials) => {
-    const res = await apiFetch(`${process.env.REACT_APP_API_URL}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(creds),
-    });
-    const data = await res.json();
+    const { data } = await axiosClient.post('/auth/register', creds);
     if (data.access_token) {
       localStorage.setItem('auth_token', data.access_token);
       setToken(data.access_token);

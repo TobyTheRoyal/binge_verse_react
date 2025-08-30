@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { apiFetch } from "../api/client";
+import axiosClient from "../api/axiosClient";
 
 export interface SeriesItem {
   tmdbId: string;
@@ -23,8 +23,7 @@ export function useSeries() {
   const fetchPage = useCallback(async (page: number, replace = false) => {
     setIsLoading(true);
     try {
-      const res = await apiFetch(`/api/series?page=${page}`, { auth: true });
-      const data = await res.json();
+      const { data } = await axiosClient.get(`/api/series`, { params: { page } });
       if (data.length === 0) {
         setHasMore(false);
       } else {
@@ -69,12 +68,7 @@ export function useSeries() {
       return;
     }
     try {
-      await apiFetch("/api/ratings", {
-        method: "POST",
-        auth: true,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tmdbId, score }), // ✅ Angular-Format
-      });
+      await axiosClient.post('/api/ratings', { tmdbId, score });
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);
     } catch (err) {

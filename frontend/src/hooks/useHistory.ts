@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { apiFetch } from '../api/client';
+import axiosClient from '../api/axiosClient';
 
 interface HistoryItem {
   id: string;
@@ -10,8 +10,7 @@ export function useHistory() {
   const [items, setItems] = useState<HistoryItem[]>([]);
 
   const load = useCallback(async () => {
-    const res = await apiFetch('/api/history', { auth: true });
-    const data = await res.json();
+    const { data } = await axiosClient.get('/api/history');
     setItems(data);
   }, []);
 
