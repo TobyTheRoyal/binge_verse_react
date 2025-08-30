@@ -10,7 +10,9 @@ export function useHistory() {
   const [items, setItems] = useState<HistoryItem[]>([]);
 
   const load = useCallback(async () => {
-    const { data } = await axiosClient.get('/api/history');
+    const { data } = await axiosClient.get<HistoryItem[]>(
+      '/api/history'
+    );
     setItems(data);
   }, []);
 

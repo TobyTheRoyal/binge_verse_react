@@ -9,6 +9,10 @@ interface RegisterCredentials extends Credentials {
   username: string;
 }
 
+interface AuthResponse {
+  access_token?: string;
+}
+
 export function useAuth() {
   const [token, setToken] = useState<string | null>(
     () => localStorage.getItem('auth_token')
@@ -19,7 +23,10 @@ export function useAuth() {
   const isLoggedIn = useCallback(() => loggedIn, [loggedIn]);
 
   const login = useCallback(async (creds: Credentials) => {
-    const { data } = await axiosClient.post('/auth/login', creds);
+    const { data } = await axiosClient.post<AuthResponse>(
+      '/auth/login',
+      creds
+    );
     if (data.access_token) {
       localStorage.setItem('auth_token', data.access_token);
       setToken(data.access_token);
@@ -28,7 +35,10 @@ export function useAuth() {
   }, []);
 
   const register = useCallback(async (creds: RegisterCredentials) => {
-    const { data } = await axiosClient.post('/auth/register', creds);
+    const { data } = await axiosClient.post<AuthResponse>(
+      '/auth/register',
+      creds
+    );
     if (data.access_token) {
       localStorage.setItem('auth_token', data.access_token);
       setToken(data.access_token);

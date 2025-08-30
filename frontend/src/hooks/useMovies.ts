@@ -52,7 +52,7 @@ export function useMovies() {
     async (pageToLoad: number, replace = false) => {
       setIsLoading(true);
       try {
-        const { data } = await axiosClient.get(`/api/movies`, {
+        const { data } = await axiosClient.get<Movie[]>(`/api/movies`, {
           params: {
             page: pageToLoad,
             filters: JSON.stringify(filters),

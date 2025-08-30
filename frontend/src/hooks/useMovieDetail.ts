@@ -7,6 +7,15 @@ interface Actor {
   profilePathUrl: string;
 }
 
+interface WatchlistEntry {
+  tmdbId: string;
+}
+
+interface Rating {
+  tmdbId: string;
+  score: number;
+}
+
 export interface MovieDetail {
   tmdbId: string;
   title: string;
@@ -31,16 +40,22 @@ export function useMovieDetail(id?: string) {
     setIsLoading(true);
     try {
       // 1. Movie Details
-      const { data } = await axiosClient.get(`/api/movies/${id}`);
+      const { data } = await axiosClient.get<MovieDetail>(
+        `/api/movies/${id}`
+      );
       setMovie(data);
 
       // 2. Watchlist Status
-      const { data: wl } = await axiosClient.get(`/api/watchlist`);
-      setIsInWL(wl.some((c: any) => c.tmdbId === id));
+      const { data: wl } = await axiosClient.get<WatchlistEntry[]>(
+        `/api/watchlist`
+      );
+      setIsInWL(wl.some((c) => c.tmdbId === id));
 
       // 3. User Ratings
-      const { data: ratings } = await axiosClient.get(`/api/ratings`);
-      const myRating = ratings.find((r: any) => r.tmdbId === id)?.score ?? null;
+      const { data: ratings } = await axiosClient.get<Rating[]>(
+        `/api/ratings`
+      );
+      const myRating = ratings.find((r) => r.tmdbId === id)?.score ?? null;
       setUserRating(myRating);
     } catch (err) {
       console.error("Failed to load movie details", err);

@@ -23,7 +23,9 @@ export function useSeries() {
   const fetchPage = useCallback(async (page: number, replace = false) => {
     setIsLoading(true);
     try {
-      const { data } = await axiosClient.get(`/api/series`, { params: { page } });
+      const { data } = await axiosClient.get<SeriesItem[]>(`/api/series`, {
+        params: { page },
+      });
       if (data.length === 0) {
         setHasMore(false);
       } else {

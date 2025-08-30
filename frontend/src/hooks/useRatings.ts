@@ -17,7 +17,9 @@ export function useRatings() {
   const [ratings, setRatings] = useState<RatingItem[]>([]);
   const fetchUserRatings = useCallback(async () => {
     try {
-      const { data } = await axiosClient.get('/api/ratings');
+      const { data } = await axiosClient.get<RatingItem[]>(
+        '/api/ratings'
+      );
       setRatings(data);
     } catch (err) {
       console.error("Failed to fetch ratings", err);

@@ -90,7 +90,7 @@ const Home: React.FC = () => {
     try {
       const data = await getTrending();
       setItems(0, data);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Failed to load trending', err);
       setLoading(0, false);
     }
@@ -99,7 +99,7 @@ const Home: React.FC = () => {
     try {
       const data = await getTopRated();
       setItems(1, data);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Failed to load top rated', err);
       setLoading(1, false);
     }
@@ -108,7 +108,7 @@ const Home: React.FC = () => {
     try {
       const data = await getNewReleases();
       setItems(2, data);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Failed to load new releases', err);
       setLoading(2, false);
     }
@@ -120,14 +120,14 @@ const Home: React.FC = () => {
     try {
       const data = await getWatchlist();
       setItems(3, data as unknown as Content[]);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Failed to load watchlist', err);
       setLoading(3, false);
     }
   };
 
   useEffect(() => {
-    fetchUserRatings().catch(err => console.error('Failed to fetch ratings', err));
+    fetchUserRatings().catch((err: unknown) => console.error('Failed to fetch ratings', err));
     if (loggedIn) {
       loadCategories();
     } else {
@@ -152,7 +152,7 @@ const Home: React.FC = () => {
       }
       const data = await getWatchlist();
       setItems(3, data as unknown as Content[]);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
     }
   };
@@ -191,7 +191,7 @@ const Home: React.FC = () => {
       setIsRatingSubmitted(true);
       await fetchUserRatings();
       setTimeout(() => stopRating(), 500);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('Failed to set rating', err);
     }
   };
