@@ -10,11 +10,12 @@ export const createRatingsRouter = (
 
   router.use(auth);
 
-  router.post('/', async (req, res) => {
+  router.post('/', async (req, res): Promise<void> => {
     const user = (req as any).user;
     const { tmdbId, rating } = req.body;
     if (typeof rating !== 'number' || rating < 0 || rating > 10) {
-      return res.status(400).json({ message: 'Rating must be between 0 and 10' });
+      res.status(400).json({ message: 'Rating must be between 0 and 10' });
+      return;
     }
     await ratingsService.setRating(user.id, tmdbId, rating);
     res.status(204).end();

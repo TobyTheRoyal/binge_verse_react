@@ -10,10 +10,11 @@ export const createUsersRouter = (usersService: UsersService) => {
     res.json((req as any).user);
   });
 
-  router.get('/:id', async (req, res) => {
+  router.get('/:id', async (req, res): Promise<void> => {
     const user = await usersService.findById(parseInt(req.params.id, 10));
     if (!user) {
-      return res.status(404).json({ message: 'Not found' });
+      res.status(404).json({ message: 'Not found' });
+      return;
     }
     res.json(user);
   });
