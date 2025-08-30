@@ -1,14 +1,12 @@
 import { Router } from 'express';
 import { RatingsService } from '../services/ratingsService';
 import { jwtAuth } from '../middleware/jwt';
-import { UsersService } from '../services/usersService';
 
 export const createRatingsRouter = (
   ratingsService: RatingsService,
-  usersService: UsersService,
 ) => {
   const router = Router();
-  const auth = jwtAuth(usersService);
+  const auth = jwtAuth();
 
   router.use(auth);
 

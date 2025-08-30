@@ -1,22 +1,20 @@
-export class WatchlistService {
-  private watchlists = new Map<number, string[]>();
+import { WatchlistItemModel, WatchlistItemDocument } from '../models/watchlistItem';
 
-  addToWatchlist(userId: number, tmdbId: string) {
-    const list = this.watchlists.get(userId) || [];
-    if (!list.includes(tmdbId)) {
-      list.push(tmdbId);
-      this.watchlists.set(userId, list);
+  export class WatchlistService {
+  async addToWatchlist(userId: string, tmdbId: string): Promise<WatchlistItemDocument> {
+    const existing = await WatchlistItemModel.findOne({ userId, tmdbId }).exec();
+    if (existing) {
+      return existing;
     }
-    return { userId, tmdbId };
+    const item = new WatchlistItemModel({ userId, tmdbId });
+    return item.save();
   }
 
-  getWatchlist(userId: number): string[] {
-    return this.watchlists.get(userId) || [];
+  async getWatchlist(userId: string): Promise<WatchlistItemDocument[]> {
+    return WatchlistItemModel.find({ userId }).exec();
   }
 
-  removeFromWatchlist(userId: number, tmdbId: string) {
-    const list = this.watchlists.get(userId) || [];
-    const filtered = list.filter(id => id !== tmdbId);
-    this.watchlists.set(userId, filtered);
+  async removeFromWatchlist(userId: string, tmdbId: string): Promise<void> {
+    await WatchlistItemModel.deleteOne({ userId, tmdbId }).exec();
   }
 }

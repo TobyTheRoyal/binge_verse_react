@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { UsersService } from '../services/usersService';
+import { UserModel } from '../models/user';
 
-export const jwtAuth = (usersService: UsersService) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+export const jwtAuth = () => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
       return res.status(401).json({ message: 'Unauthorized' });
@@ -11,13 +11,14 @@ export const jwtAuth = (usersService: UsersService) => {
     const token = authHeader.split(' ')[1];
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET || 'secret') as any;
-      usersService.findById(payload.sub).then(user => {
+      if (!(req as any).user) {
+        const user = await UserModel.findById(payload.sub).exec();
         if (!user) {
           return res.status(401).json({ message: 'Unauthorized' });
         }
         (req as any).user = user;
-        next();
-      });
+        }
+      next();
     } catch (err) {
       return res.status(401).json({ message: 'Unauthorized' });
     }

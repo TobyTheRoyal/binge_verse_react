@@ -4,7 +4,7 @@ import { jwtAuth } from '../middleware/jwt';
 
 export const createUsersRouter = (usersService: UsersService) => {
   const router = Router();
-  const auth = jwtAuth(usersService);
+  const auth = jwtAuth();
 
   router.get('/me', auth, (req, res) => {
     res.json((req as any).user);

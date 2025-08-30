@@ -18,16 +18,16 @@ export class AuthService {
 
   async register(dto: RegisterDto): Promise<{ access_token: string }> {
     try {
-      const existingEmail = await this.usersService.findByEmail(email);
+      const existingEmail = await this.usersService.findByEmail(dto.email);
       if (existingEmail) {
         throw new Error('Email already exists');
       }
-      const existingUsername = await this.usersService.findByUsername(username);
+      const existingUsername = await this.usersService.findByUsername(dto.username);
       if (existingUsername) {
         throw new Error('Username already exists');
       }
-      const hashed = await bcrypt.hash(password, 10);
-      const user = await this.usersService.create({ username, email, password: hashed });
+      const hashed = await bcrypt.hash(dto.password, 10);
+      const user = await this.usersService.create({ username: dto.username, email: dto.email, password: hashed });
       const payload = { email: user.email, sub: user.id };
       const token = jwt.sign(payload, process.env.JWT_SECRET || 'secret', {
         expiresIn: '1h',

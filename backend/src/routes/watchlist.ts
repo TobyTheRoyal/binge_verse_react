@@ -1,31 +1,33 @@
 import { Router } from 'express';
 import { WatchlistService } from '../services/watchlistService';
 import { jwtAuth } from '../middleware/jwt';
-import { UsersService } from '../services/usersService';
+
 
 export const createWatchlistRouter = (
   watchlistService: WatchlistService,
-  usersService: UsersService,
+  
 ) => {
   const router = Router();
-  const auth = jwtAuth(usersService);
+  const auth = jwtAuth();
 
   router.use(auth);
 
-  router.get('/', (req, res) => {
+  router.get('/', async (req, res) => {
     const user = (req as any).user;
-    res.json(watchlistService.getWatchlist(user.id));
+    const list = await watchlistService.getWatchlist(user.id);
+    res.json(list);
   });
 
-  router.post('/', (req, res) => {
+  router.post('/', async (req, res) => {
     const user = (req as any).user;
     const { tmdbId } = req.body;
-    res.json(watchlistService.addToWatchlist(user.id, tmdbId));
+    const item = await watchlistService.addToWatchlist(user.id, tmdbId);
+    res.status(201).json(item);
   });
 
-  router.delete('/:tmdbId', (req, res) => {
+  router.delete('/:tmdbId', async (req, res) => {
     const user = (req as any).user;
-    watchlistService.removeFromWatchlist(user.id, req.params.tmdbId);
+    await watchlistService.removeFromWatchlist(user.id, req.params.tmdbId);
     res.status(204).end();
   });
 

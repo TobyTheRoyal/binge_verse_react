@@ -43,8 +43,8 @@ async function start() {
     // Routes
     app.use('/auth', createAuthRouter(authService));
     app.use('/content', createContentRouter(contentService));
-    app.use('/watchlist', createWatchlistRouter(watchlistService, usersService));
-    app.use('/ratings', createRatingsRouter(ratingsService, usersService));
+    app.use('/watchlist', createWatchlistRouter(watchlistService));
+    app.use('/ratings', createRatingsRouter(ratingsService));
     app.use('/movies', createMoviesRouter(moviesService));
     app.use('/users', createUsersRouter(usersService));
 
