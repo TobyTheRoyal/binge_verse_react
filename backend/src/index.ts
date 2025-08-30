@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cron from 'node-cron';
+import mongoose from 'mongoose';
 import { UsersService } from './services/usersService';
 import { AuthService } from './services/authService';
 import { ContentService } from './services/contentService';
@@ -31,14 +32,29 @@ const moviesService = new MoviesService(contentService);
 cron.schedule('0 2 * * *', () => contentService.updateHomeCaches());
 
 // Routes
-app.use('/auth', createAuthRouter(authService));
-app.use('/content', createContentRouter(contentService));
-app.use('/watchlist', createWatchlistRouter(watchlistService, usersService));
-app.use('/ratings', createRatingsRouter(ratingsService, usersService));
-app.use('/movies', createMoviesRouter(moviesService));
-app.use('/users', createUsersRouter(usersService));
+
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Express server running on port ${port}`);
-});
+async function start() {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI as string);
+    console.log('Connected to MongoDB');
+
+    // Routes
+    app.use('/auth', createAuthRouter(authService));
+    app.use('/content', createContentRouter(contentService));
+    app.use('/watchlist', createWatchlistRouter(watchlistService, usersService));
+    app.use('/ratings', createRatingsRouter(ratingsService, usersService));
+    app.use('/movies', createMoviesRouter(moviesService));
+    app.use('/users', createUsersRouter(usersService));
+
+    app.listen(port, () => {
+      console.log(`Express server running on port ${port}`);
+    });
+  } catch (error) {
+    console.error('Failed to connect to MongoDB', error);
+    process.exit(1);
+  }
+}
+
+start();

@@ -1,29 +1,20 @@
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  password: string;
-}
+import { UserModel, UserDocument } from '../models/user';
 
 export class UsersService {
-  private users: User[] = [];
-  private idCounter = 1;
-
-  async create(data: { username: string; email: string; password: string }): Promise<User> {
-    const user: User = { id: this.idCounter++, ...data };
-    this.users.push(user);
-    return user;
+  async create(data: { username: string; email: string; password: string }): Promise<UserDocument> {
+    const user = new UserModel(data);
+    return user.save();
   }
 
-  async findByEmail(email: string): Promise<User | undefined> {
-    return this.users.find(u => u.email === email);
+  async findByEmail(email: string): Promise<UserDocument | null> {
+    return UserModel.findOne({ email }).exec();
   }
 
-  async findByUsername(username: string): Promise<User | undefined> {
-    return this.users.find(u => u.username === username);
+  async findByUsername(username: string): Promise<UserDocument | null> {
+    return UserModel.findOne({ username }).exec();
   }
 
-  async findById(id: number): Promise<User | undefined> {
-    return this.users.find(u => u.id === id);
+  async findById(id: number): Promise<UserDocument | null> {
+    return UserModel.findById(id).exec();
   }
 }
