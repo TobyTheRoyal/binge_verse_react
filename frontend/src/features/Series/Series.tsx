@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSeries } from "../../hooks/useSeries";
 import { useFilters } from "../../hooks/useFilters";
 import { useWatchlist } from "../../hooks/useWatchlist";
-import FilterControls from "../filter-controls/FilterControls";
+import FilterControls from "../FilterControls/FilterControls";
 import styles from "./Series.module.scss";
 
 const Series: React.FC = () => {

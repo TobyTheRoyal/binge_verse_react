@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Content } from '../types/content';
 import { getTrending, getTopRated, getNewReleases } from '../api/contentApi';
-import useWatchlist from '../hooks/useWatchlist';
+import { useWatchlist } from "../hooks/useWatchlist";
 import { useRatings } from '../hooks/useRatings';
 import { useAuth } from '../hooks/useAuth';
 import styles from './Home.module.scss';

@@ -84,7 +84,7 @@ h2 {
 
 /* ========== Card Styles ========== */
 .contentCard {
-  @include content-card.card-base;
+  @extend .content-card;
   cursor: pointer;
 
   .cardImage {

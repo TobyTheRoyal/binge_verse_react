@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useMovies } from "../../hooks/useMovies";
 import FilterControls from "../FilterControls/FilterControls";
 import styles from "./Movies.module.scss";
-import cardStyles from "../../styles/content-card.module.scss";
 import { useNavigate } from "react-router-dom";
 
 const Movies: React.FC = () => {
@@ -93,12 +92,12 @@ const Movies: React.FC = () => {
         {movies.map((item) => (
           <div
             key={item.tmdbId}
-            className={cardStyles.contentCard}
+            className={styles.contentCard}
             onClick={() => onCardClick(item.tmdbId)}
             onMouseLeave={stopRating}
           >
             <div
-              className={cardStyles.cardImage}
+              className={styles.cardImage}
               style={{
                 backgroundImage: `url(${
                   item.poster || "https://placehold.co/220x330"
@@ -107,7 +106,7 @@ const Movies: React.FC = () => {
             >
               {/* Watchlist */}
               <button
-                className={cardStyles.addBtn}
+                className={styles.addBtn}
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleWatchlist(item.tmdbId);
@@ -129,7 +128,7 @@ const Movies: React.FC = () => {
 
               {/* Rating */}
               <button
-                className={cardStyles.ratingBtn}
+                className={styles.ratingBtn}
                 onClick={(e) => {
                   e.stopPropagation();
                   startRating(item.tmdbId);
@@ -149,11 +148,11 @@ const Movies: React.FC = () => {
               {/* Overlay */}
               {selectedContentId === item.tmdbId && !isRatingSubmitted && (
                 <>
-                  <div className={cardStyles.ratingOverlay}></div>
-                  <div className={cardStyles.ratingInputContainer}>
-                    <div className={cardStyles.ratingCard}>
+                  <div className={styles.ratingOverlay}></div>
+                  <div className={styles.ratingInputContainer}>
+                    <div className={styles.ratingCard}>
                       <button
-                        className={cardStyles.closeBtn}
+                        className={styles.closeBtn}
                         onClick={stopRating}
                       >
                         ✕
@@ -164,13 +163,13 @@ const Movies: React.FC = () => {
                         value={ratingScore}
                         onChange={(e) => setRatingScore(e.target.value)}
                         placeholder="0.0 – 10.0"
-                        className={cardStyles.ratingInputField}
+                        className={styles.ratingInputField}
                         onKeyDown={(e) =>
                           e.key === "Enter" && submitRating(item.tmdbId)
                         }
                       />
                       <button
-                        className={cardStyles.submitRatingBtn}
+                        className={styles.submitRatingBtn}
                         onClick={() => submitRating(item.tmdbId)}
                       >
                         Submit
@@ -182,29 +181,29 @@ const Movies: React.FC = () => {
 
               {/* Eigene Bewertung */}
               {getRating(item.tmdbId) !== null && (
-                <div className={cardStyles.ownRatingTag}>
-                  <span className={cardStyles.starIcon}>★</span>
+                <div className={styles.ownRatingTag}>
+                  <span className={styles.starIcon}>★</span>
                   {getRating(item.tmdbId)?.toFixed(1)}
                 </div>
               )}
             </div>
-            <p className={cardStyles.cardTitle}>
+            <p className={styles.cardTitle}>
               {item.title} ({item.releaseYear})
             </p>
-            <div className={cardStyles.ratingsContainer}>
-              <div className={cardStyles.imdbRating}>
+            <div className={styles.ratingsContainer}>
+              <div className={styles.imdbRating}>
                 <img
                   src="/assets/images/imdb-logo.png"
                   alt="IMDb"
-                  className={`${cardStyles.ratingIcon} ${cardStyles.imdbRatingIcon}`}
+                  className={`${styles.ratingIcon} ${styles.imdbRatingIcon}`}
                 />
                 {item.imdbRating != null ? item.imdbRating.toFixed(1) : "N/A"}
               </div>
-              <div className={cardStyles.rtRating}>
+              <div className={styles.rtRating}>
                 <img
                   src="/assets/images/rt-logo-cf.png"
                   alt="Rotten Tomatoes"
-                  className={`${cardStyles.ratingIcon} ${cardStyles.rtRatingIcon}`}
+                  className={`${styles.ratingIcon} ${styles.rtRatingIcon}`}
                 />
                 {item.rtRating != null ? `${item.rtRating}%` : "N/A"}
               </div>
