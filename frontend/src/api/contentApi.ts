@@ -2,7 +2,7 @@ import axiosClient from './axiosClient';
 import { Content } from '../types/content';
 import { FilterOptions } from '../hooks/useFilters';
 
-const apiUrl = process.env.REACT_APP_API_URL || '';
+const apiUrl = import.meta.env.VITE_API_URL || '';
 
 export const getTrending = async (): Promise<Content[]> => {
   const { data } = await axiosClient.get<Content[]>('/content/trending');
