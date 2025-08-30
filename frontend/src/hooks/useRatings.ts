@@ -15,59 +15,35 @@ export interface RatingItem {
 
 export function useRatings() {
   const [ratings, setRatings] = useState<RatingItem[]>([]);
-  const [selectedContentId, setSelectedContentId] = useState<number | null>(null);
-  const [selectedContentTitle, setSelectedContentTitle] = useState("");
-  const [ratingScore, setRatingScore] = useState("");
-
-  const loadRatings = useCallback(async () => {
+  const fetchUserRatings = useCallback(async () => {
     try {
       const { data } = await axiosClient.get('/api/ratings');
       setRatings(data);
     } catch (err) {
-      console.error("Failed to load ratings", err);
+      console.error("Failed to fetch ratings", err);
     }
   }, []);
 
-  const openRatingModal = (contentId: number) => {
-    setSelectedContentId(contentId);
-    const selected = ratings.find((r) => r.content.id === contentId);
-    setSelectedContentTitle(selected?.title ?? "Unknown");
-    setRatingScore(selected ? String(selected.score) : "");
-  };
-
-  const closeRatingModal = () => {
-    setSelectedContentId(null);
-    setSelectedContentTitle("");
-    setRatingScore("");
-  };
-
-  const submitRating = async () => {
-    const score = parseFloat(ratingScore);
-    if (isNaN(score) || score < 0 || score > 10) {
-      alert("Score must be between 0.0 and 10.0");
-      return;
-    }
+  const rateContent = useCallback(async (tmdbId: string, score: number) => {
     try {
-      await axiosClient.post('/api/ratings', {
-        contentId: selectedContentId,
-        score,
-      });
-      closeRatingModal();
-      loadRatings();
+      await axiosClient.post("/api/ratings", { tmdbId, score });
     } catch (err) {
       console.error("Failed to submit rating", err);
     }
-  };
+  }, []);
+
+  const getRating = useCallback(
+    (tmdbId: string): number | null => {
+      const rating = ratings.find((r) => r.content.tmdbId === tmdbId);
+      return rating ? rating.score : null;
+    },
+    [ratings]
+  );
 
   return {
     ratings,
-    loadRatings,
-    selectedContentId,
-    selectedContentTitle,
-    ratingScore,
-    setRatingScore,
-    openRatingModal,
-    closeRatingModal,
-    submitRating,
+    fetchUserRatings,
+    rateContent,
+    getRating,
   };
 }

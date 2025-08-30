@@ -19,11 +19,10 @@ const Home: React.FC = () => {
     
   const navigate = useNavigate();
   const auth = useAuth();
-  const token = auth.getToken() || '';
   const loggedIn = auth.isLoggedIn();
 
   const { getWatchlist, addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
-  const { fetchUserRatings, rateContent, getRating } = useRatings(token);
+  const { fetchUserRatings, rateContent, getRating } = useRatings();
 
   const [categories, setCategories] = useState<Category[]>([
     { id: 'trending', title: 'Trending Now', items: [], isLoading: false },

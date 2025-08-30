@@ -109,7 +109,7 @@ const Series: React.FC = () => {
                   e.stopPropagation();
                   isInWatchlist(s.tmdbId)
                     ? removeFromWatchlist(s.tmdbId)
-                    : addToWatchlist(s.tmdbId, "tv");
+                    : addToWatchlist({ id: s.tmdbId, type: "tv" });
                 }}
               >
                 {isInWatchlist(s.tmdbId) ? "♥" : "♡"}

@@ -28,18 +28,41 @@ export function useWatchlist() {
   const [isRatingSubmitted, setIsRatingSubmitted] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Filtering helper
+  const filterContentList = useCallback(
+    (contents: WatchlistItem[]) => {
+      const f: FilterOptions = filters;
+      return contents.filter((c) => {
+        if (f.genres.length && !(c.genres || []).some((g) => f.genres.includes(g))) return false;
+        if (f.providers.length && !(c.providers || []).some((p) => f.providers.includes(p))) return false;
+        if (
+          c.releaseYear &&
+          (c.releaseYear < f.releaseYearMin || c.releaseYear > f.releaseYearMax)
+        )
+          return false;
+        if (f.imdbRatingMin > 0 && (!c.imdbRating || c.imdbRating < f.imdbRatingMin))
+          return false;
+        if (f.rtRatingMin > 0 && (!c.rtRating || c.rtRating < f.rtRatingMin))
+          return false;
+        return true;
+      });
+    },
+    [filters]
+  );
+
   // Fetch
   const getWatchlist = useCallback(async () => {
     if (!token) return [];
     try {
-      const { data } = await axiosClient.get('/api/watchlist/user');
+      const { data } = await axiosClient.get<WatchlistItem[]>("/api/watchlist/user");
       setAllContents(data);
+      setFilteredContents(filterContentList(data));
       return data;
     } catch (err) {
       console.error("Failed to load watchlist", err);
       return [];
     }
-  }, [token]);
+  }, [token, filterContentList]);
 
   useEffect(() => {
     getWatchlist();
@@ -47,33 +70,54 @@ export function useWatchlist() {
 
   // Apply Filters
   useEffect(() => {
-    const f: FilterOptions = filters;
-    setFilteredContents(
-      allContents.filter((c) => {
-        if (f.genres.length && !(c.genres || []).some((g) => f.genres.includes(g))) return false;
-        if (f.providers.length && !(c.providers || []).some((p) => f.providers.includes(p)))
-          return false;
-        if (c.releaseYear && (c.releaseYear < f.releaseYearMin || c.releaseYear > f.releaseYearMax))
-          return false;
-        if (f.imdbRatingMin > 0 && (!c.imdbRating || c.imdbRating < f.imdbRatingMin)) return false;
-        if (f.rtRatingMin > 0 && (!c.rtRating || c.rtRating < f.rtRatingMin)) return false;
-        return true;
-      })
-    );
-  }, [filters, allContents]);
+    setFilteredContents(filterContentList(allContents));
+  }, [filters, allContents, filterContentList]);
 
   // CRUD
+  const addToWatchlist = useCallback(
+    async (item: { id: string; type: "movie" | "tv" }) => {
+      if (!token) return;
+      try {
+        const { data } = await axiosClient.post<
+          WatchlistItem | { content: WatchlistItem }
+        >("/api/watchlist/add", {
+          tmdbId: item.id,
+          type: item.type,
+        });
+        const newContent: WatchlistItem =
+          (data as any).content ?? (data as WatchlistItem);
+        setAllContents((prev) => {
+          const updated = [...prev, newContent];
+          setFilteredContents(filterContentList(updated));
+          return updated;
+        });
+      } catch (err) {
+        console.error("Failed to add to watchlist", err);
+      }
+    },
+    [token, filterContentList]
+  );
+
   const removeFromWatchlist = useCallback(
     async (tmdbId: string) => {
       if (!token) return;
       try {
         await axiosClient.delete(`/api/watchlist/user/${tmdbId}`);
-        setAllContents((prev) => prev.filter((i) => i.tmdbId !== tmdbId));
+        setAllContents((prev) => {
+          const updated = prev.filter((i) => i.tmdbId !== tmdbId);
+          setFilteredContents(filterContentList(updated));
+          return updated;
+        });
       } catch (err) {
         console.error("Failed to remove from watchlist", err);
       }
     },
-    [token]
+    [token, filterContentList]
+  );
+
+  const isInWatchlist = useCallback(
+    (id: string) => allContents.some((i) => i.tmdbId === id),
+    [allContents]
   );
 
   // Rating
@@ -135,7 +179,10 @@ export function useWatchlist() {
     hasActiveFilters,
     updateFilters,
     resetFilters,
+    getWatchlist,
+    addToWatchlist,
     removeFromWatchlist,
+    isInWatchlist,
     startRating,
     stopRating,
     submitRating,
