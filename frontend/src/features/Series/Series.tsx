@@ -78,6 +78,13 @@ const Series: React.FC = () => {
 
       {showFilters && (
         <FilterControls
+          genresSelected={filters.genres}
+          releaseYearMin={filters.releaseYearMin}
+          releaseYearMax={filters.releaseYearMax}
+          imdbRatingMin={filters.imdbRatingMin}
+          rtRatingMin={filters.rtRatingMin}
+          userRatingMin={filters.userRatingMin}
+          providersSelected={filters.providers}
           currentYear={new Date().getFullYear()}
           onFiltersChange={updateFilters}
           onReset={resetFilters}

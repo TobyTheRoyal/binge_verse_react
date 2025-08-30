@@ -17,6 +17,7 @@ export interface FilterOptions {
   imdbRatingMin: number;
   rtRatingMin: number;
   providers: string[];
+  userRatingMin: number;
 }
 
 export function useMovies() {
@@ -33,6 +34,7 @@ export function useMovies() {
     imdbRatingMin: 0,
     rtRatingMin: 0,
     providers: [],
+    userRatingMin: 0,
   });
 
   // Rating
@@ -97,6 +99,7 @@ export function useMovies() {
       imdbRatingMin: 0,
       rtRatingMin: 0,
       providers: [],
+      userRatingMin: 0,
     });
 
   const toggleFilters = () => setShowFilters((s) => !s);
@@ -107,6 +110,7 @@ export function useMovies() {
     filters.releaseYearMax !== new Date().getFullYear() ||
     filters.imdbRatingMin > 0 ||
     filters.rtRatingMin > 0 ||
+    filters.userRatingMin > 0 ||
     filters.providers.length > 0;
 
   // Rating
