@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cron from 'node-cron';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import { UsersService } from './services/usersService';
 import { AuthService } from './services/authService';
@@ -18,6 +19,7 @@ import { createUsersRouter } from './routes/users';
 dotenv.config();
 
 const app = express();
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 
 // Services
