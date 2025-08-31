@@ -144,9 +144,23 @@ export class ContentService {
     }
 
     const data = await response.json();
-    return (data.results || []).map((result: any) => ({
-      tmdbId: String(result.id),
-      title: result.title || result.name || '',
-    }));
+    return (data.results || [])
+      .filter(
+        (result: any) => result.media_type === 'movie' || result.media_type === 'tv'
+      )
+      .map((result: any) => ({
+        id: result.id,
+        tmdbId: String(result.id),
+        title: result.title || result.name || '',
+        releaseYear: result.release_date
+          ? parseInt(result.release_date.slice(0, 4), 10)
+          : result.first_air_date
+          ? parseInt(result.first_air_date.slice(0, 4), 10)
+          : 0,
+        poster: result.poster_path
+          ? `https://image.tmdb.org/t/p/w500${result.poster_path}`
+          : '',
+        type: result.media_type === 'tv' ? 'tv' : 'movie',
+      }));
   }
 }
