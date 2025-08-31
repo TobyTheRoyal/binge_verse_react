@@ -52,7 +52,7 @@ export function useSeriesDetail(id?: string) {
 
       // 2. Watchlist Status
       const { data: wl } = await axiosClient.get<WatchlistEntry[]>(
-        `/api/watchlist/user`
+        `/api/watchlist`
       );
       setIsInWL(wl.some((c) => c.tmdbId === id));
 
@@ -77,10 +77,10 @@ export function useSeriesDetail(id?: string) {
     if (!series) return;
     try {
       if (isInWL) {
-        await axiosClient.delete(`/api/watchlist/user/${series.tmdbId}`);
+        await axiosClient.delete(`/api/watchlist/${series.tmdbId}`);
         setIsInWL(false);
       } else {
-        await axiosClient.post(`/api/watchlist/add`, {
+        await axiosClient.post(`/api/watchlist`, {
           tmdbId: series.tmdbId,
           type: 'tv',
         });

@@ -54,7 +54,7 @@ export function useWatchlist() {
   const getWatchlist = useCallback(async () => {
     if (!token) return [];
     try {
-      const { data } = await axiosClient.get<WatchlistItem[]>("/api/watchlist/user");
+      const { data } = await axiosClient.get<WatchlistItem[]>("/api/watchlist");
       setAllContents(data);
       setFilteredContents(filterContentList(data));
       return data;
@@ -80,7 +80,7 @@ export function useWatchlist() {
       try {
         const { data } = await axiosClient.post<
           WatchlistItem | { content: WatchlistItem }
-        >("/api/watchlist/add", {
+        >("/api/watchlist", {
           tmdbId: item.id,
           type: item.type,
         });
@@ -102,7 +102,7 @@ export function useWatchlist() {
     async (tmdbId: string) => {
       if (!token) return;
       try {
-        await axiosClient.delete(`/api/watchlist/user/${tmdbId}`);
+        await axiosClient.delete(`/api/watchlist/${tmdbId}`);
         setAllContents((prev) => {
           const updated = prev.filter((i) => i.tmdbId !== tmdbId);
           setFilteredContents(filterContentList(updated));
