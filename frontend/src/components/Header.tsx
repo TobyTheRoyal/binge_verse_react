@@ -2,15 +2,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 import { searchTmdb } from "../api/contentApi";
 import type { Content } from "../types/content";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  const { isLoggedIn: checkLoggedIn, logout } = useAuth();
+  const { loggedIn, logout } = useAuth();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(checkLoggedIn());
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -19,14 +18,6 @@ const Header: React.FC = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
-
-  // Check Login Status
-  useEffect(() => {
-    setIsLoggedIn(checkLoggedIn());
-    const handleStorage = () => setIsLoggedIn(checkLoggedIn());
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, [checkLoggedIn]);
 
   // Scroll Listener
   useEffect(() => {
@@ -67,7 +58,6 @@ const Header: React.FC = () => {
     logout();
     navigate("/auth/login");
     setIsDropdownOpen(false);
-    setIsLoggedIn(false);
   };
 
   const selectSuggestion = (item: Content) => {
@@ -140,7 +130,7 @@ const Header: React.FC = () => {
 
         {/* User Options */}
         <div className={styles.userOptions}>
-          {isLoggedIn ? (
+          {loggedIn ? (
             <>
               <Link className={styles.userLink} to="/watchlist">
                 <svg

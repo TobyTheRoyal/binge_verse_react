@@ -1,15 +1,15 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 
 interface AuthGuardProps {
   children: JSX.Element;
 }
 
 const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
-  const { isLoggedIn } = useAuth();
+  const { loggedIn } = useAuth();
 
-  return isLoggedIn() ? children : <Navigate to="/auth/login" replace />;
+  return loggedIn ? children : <Navigate to="/auth/login" replace />;
 };
 
 export default AuthGuard;

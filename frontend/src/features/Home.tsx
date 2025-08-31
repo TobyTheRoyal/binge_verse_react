@@ -5,7 +5,7 @@ import { Content } from '../types/content';
 import { getTrending, getTopRated, getNewReleases } from '../api/contentApi';
 import { useWatchlist } from "../hooks/useWatchlist";
 import { useRatings } from '../hooks/useRatings';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from "../context/AuthContext";
 import styles from './Home.module.scss';
 
 interface Category {
@@ -18,8 +18,7 @@ interface Category {
 const Home: React.FC = () => {
     
   const navigate = useNavigate();
-  const auth = useAuth();
-  const loggedIn = auth.isLoggedIn();
+  const { loggedIn } = useAuth();
 
   const { getWatchlist, addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
   const { fetchUserRatings, rateContent, getRating } = useRatings();

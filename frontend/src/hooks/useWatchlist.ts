@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import axiosClient from "../api/axiosClient";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../context/AuthContext";
 import { useFilters, FilterOptions } from "./useFilters";
 
 export interface WatchlistItem {
