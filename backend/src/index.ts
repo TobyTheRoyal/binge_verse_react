@@ -35,9 +35,13 @@ cron.schedule('0 2 * * *', () => contentService.updateHomeCaches());
 
 
 const port = process.env.PORT || 3000;
+const mongodbUri = process.env.MONGODB_URI;
 async function start() {
   try {
-    await mongoose.connect(process.env.MONGODB_URI as string);
+    if (!mongodbUri) {
+      throw new Error('MONGODB_URI is not defined');
+    }
+    await mongoose.connect(mongodbUri);
     console.log('Connected to MongoDB');
 
     // Routes

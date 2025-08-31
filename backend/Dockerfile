@@ -16,8 +16,8 @@ RUN npm install
 # Kopiere den gesamten Quellcode
 COPY . .
 
-# Baue die Anwendung (TypeScript zu JavaScript)
-RUN npm run build
+# Kompiliere den TypeScript-Code
+RUN npx tsc
 
 # Zweite Stufe: Production-Image
 FROM node:20-alpine
@@ -37,4 +37,4 @@ RUN npm install --production
 EXPOSE 3000
 
 # Starte die Anwendung
-CMD ["node", "dist/main"]
+CMD ["node", "dist/index.js"]
