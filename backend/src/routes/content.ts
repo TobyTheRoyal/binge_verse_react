@@ -16,5 +16,19 @@ export const createContentRouter = (contentService: ContentService) => {
     res.json(await contentService.getNewReleases());
   });
 
+  router.post('/search', async (req, res) => {
+    const { query } = req.body;
+    if (typeof query !== 'string' || query.trim() === '') {
+      res.status(400).json({ message: 'Query is required' });
+      return;
+    }
+    try {
+      const results = await contentService.searchTmdb(query);
+      res.json(results);
+    } catch (e: any) {
+      res.status(500).json({ message: e.message });
+    }
+  });
+
   return router;
 };

@@ -126,4 +126,27 @@ export class ContentService {
     }
     return this.cacheNewReleases;
   }
+
+  async searchTmdb(query: string): Promise<Content[]> {
+    const apiKey = process.env.TMDB_API_KEY;
+    if (!apiKey) {
+      throw new Error('TMDB_API_KEY is not defined');
+    }
+
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(
+        query,
+      )}&api_key=${apiKey}`,
+    );
+
+    if (!response.ok) {
+      throw new Error(`TMDB search failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return (data.results || []).map((result: any) => ({
+      tmdbId: String(result.id),
+      title: result.title || result.name || '',
+    }));
+  }
 }
