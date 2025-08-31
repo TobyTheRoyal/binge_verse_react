@@ -1,20 +1,20 @@
-import { WatchlistItemModel, WatchlistItemDocument } from '../models/watchlistItem';
+import { WatchlistModel, WatchlistDocument } from '../models/watchlist';
 
   export class WatchlistService {
-  async addToWatchlist(userId: string, tmdbId: string): Promise<WatchlistItemDocument> {
-    const existing = await WatchlistItemModel.findOne({ userId, tmdbId }).exec();
+  async addToWatchlist(userId: string, tmdbId: string): Promise<WatchlistDocument> {
+    const existing = await WatchlistModel.findOne({ userId, tmdbId }).exec();
     if (existing) {
       return existing;
     }
-    const item = new WatchlistItemModel({ userId, tmdbId });
+    const item = new WatchlistModel({ userId, tmdbId });
     return item.save();
   }
 
-  async getWatchlist(userId: string): Promise<WatchlistItemDocument[]> {
-    return WatchlistItemModel.find({ userId }).exec();
+  async getWatchlist(userId: string): Promise<WatchlistDocument[]> {
+    return WatchlistModel.find({ userId }).exec();
   }
 
   async removeFromWatchlist(userId: string, tmdbId: string): Promise<void> {
-    await WatchlistItemModel.deleteOne({ userId, tmdbId }).exec();
+    await WatchlistModel.deleteOne({ userId, tmdbId }).exec();
   }
 }
