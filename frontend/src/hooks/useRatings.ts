@@ -15,12 +15,21 @@ export interface RatingItem {
 
 export function useRatings() {
   const [ratings, setRatings] = useState<RatingItem[]>([]);
-  const fetchUserRatings = useCallback(async () => {
+  const fetchUserRatings = useCallback(async (tmdbIds: string[]) => {
     try {
-      const { data } = await axiosClient.get<RatingItem[]>(
-        '/ratings'
+      const results = await Promise.allSettled(
+        tmdbIds.map((id) =>
+          axiosClient.get<RatingItem>(`/ratings/${id}`)
+        )
       );
-      setRatings(data);
+      const fetched: RatingItem[] = [];
+      results.forEach((res) => {
+        if (res.status === "fulfilled") {
+          fetched.push(res.value.data);
+        }
+      });
+
+      setRatings(fetched);
     } catch (err) {
       console.error("Failed to fetch ratings", err);
     }

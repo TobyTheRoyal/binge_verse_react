@@ -126,13 +126,26 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchUserRatings().catch((err: unknown) => console.error('Failed to fetch ratings', err));
     if (loggedIn) {
       loadCategories();
     } else {
       loadPublicCategories();
     }
   }, [loggedIn]);
+
+  useEffect(() => {
+    if (!loggedIn) return;
+    const ids = Array.from(
+      new Set(
+        categories.flatMap((cat) => cat.items.map((item) => item.tmdbId))
+      )
+    );
+    if (ids.length > 0) {
+      fetchUserRatings(ids).catch((err: unknown) =>
+        console.error('Failed to fetch ratings', err)
+      );
+    }
+  }, [categories, loggedIn, fetchUserRatings]);
 
   useEffect(() => {
     categories.forEach(cat => updateScrollState(cat.id));
@@ -188,7 +201,7 @@ const Home: React.FC = () => {
     try {
       await rateContent(tmdbId, score);
       setIsRatingSubmitted(true);
-      await fetchUserRatings();
+      await fetchUserRatings([tmdbId]);
       setTimeout(() => stopRating(), 500);
     } catch (err: unknown) {
       console.error('Failed to set rating', err);
