@@ -13,7 +13,7 @@ interface WatchlistEntry {
 
 interface Rating {
   tmdbId: string;
-  score: number;
+  rating: number;
 }
 
 export interface MovieDetail {
@@ -55,7 +55,7 @@ export function useMovieDetail(id?: string) {
       const { data: ratings } = await axiosClient.get<Rating[]>(
         `/ratings`
       );
-      const myRating = ratings.find((r) => r.tmdbId === id)?.score ?? null;
+      const myRating = ratings.find((r) => r.tmdbId === id)?.rating ?? null;
       setUserRating(myRating);
     } catch (err) {
       console.error("Failed to load movie details", err);
@@ -92,7 +92,7 @@ export function useMovieDetail(id?: string) {
       try {
         await axiosClient.post(`/ratings`, {
           tmdbId: movie.tmdbId,
-          score,
+          rating: score,
         });
         setUserRating(score);
       } catch (err) {

@@ -14,7 +14,7 @@ interface RatedContent {
     genres?: string;
     providers?: string;
   };
-  score: number;
+  rating: number;
 }
 
 interface FilterOptions {
@@ -84,7 +84,7 @@ const History: React.FC = () => {
           if (c.rtRating == null || c.rtRating < filters.rtRatingMin) return false;
         }
         if (filters.userRatingMin > 0) {
-          if (h.score == null || h.score < filters.userRatingMin) return false;
+          if (h.rating == null || h.rating < filters.userRatingMin) return false;
         }
         return true;
       })
@@ -113,7 +113,7 @@ const History: React.FC = () => {
       return;
     }
     try {
-      await axiosClient.post("/ratings", { tmdbId, score });
+      await axiosClient.post("/ratings", { tmdbId, rating: score });
       setIsRatingSubmitted(true);
       await loadHistory();
       setTimeout(stopRating, 500);
@@ -247,10 +247,10 @@ const History: React.FC = () => {
                 </>
               )}
 
-              {entry.score != null && (
+              {entry.rating != null && (
                 <div className="own-rating-tag">
                   <span className="star-icon">★</span>
-                  {entry.score.toFixed(1)}
+                  {entry.rating.toFixed(1)}
                 </div>
               )}
             </div>

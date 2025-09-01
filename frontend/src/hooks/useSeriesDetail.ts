@@ -13,7 +13,7 @@ interface WatchlistEntry {
 
 interface Rating {
   tmdbId: string;
-  score: number;
+  rating: number;
 }
 
 export interface SeriesDetail {
@@ -60,7 +60,7 @@ export function useSeriesDetail(id?: string) {
       const { data: ratings } = await axiosClient.get<Rating[]>(
         `/ratings`
       );
-      const myRating = ratings.find((r) => r.tmdbId === id)?.score ?? null;
+      const myRating = ratings.find((r) => r.tmdbId === id)?.rating ?? null;
       setUserRating(myRating);
     } catch (err) {
       console.error("Failed to load series detail", err);
@@ -109,7 +109,7 @@ export function useSeriesDetail(id?: string) {
     try {
        await axiosClient.post('/ratings', {
         tmdbId: series.tmdbId,
-        score,
+        rating: score,
       });
       setIsRatingSubmitted(true);
       setUserRating(score);

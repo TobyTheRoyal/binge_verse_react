@@ -9,7 +9,7 @@ export interface RatingItem {
   };
   title?: string;
   poster?: string;
-  score: number;
+  rating: number;
   ratedAt: string;
 }
 
@@ -26,9 +26,9 @@ export function useRatings() {
     }
   }, []);
 
-  const rateContent = useCallback(async (tmdbId: string, score: number) => {
+  const rateContent = useCallback(async (tmdbId: string, rating: number) => {
     try {
-      await axiosClient.post("/ratings", { tmdbId, score });
+      await axiosClient.post("/ratings", { tmdbId, rating });
     } catch (err) {
       console.error("Failed to submit rating", err);
     }
@@ -37,7 +37,7 @@ export function useRatings() {
   const getRating = useCallback(
     (tmdbId: string): number | null => {
       const rating = ratings.find((r) => r.content.tmdbId === tmdbId);
-      return rating ? rating.score : null;
+      return rating ? rating.rating : null;
     },
     [ratings]
   );

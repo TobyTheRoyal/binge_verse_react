@@ -131,7 +131,7 @@ export function useMovies() {
       return;
     }
     try {
-      await axiosClient.post('/ratings', { tmdbId, score });
+      await axiosClient.post('/ratings', { tmdbId, rating: score });
       setRatings((prev) => ({ ...prev, [tmdbId]: score }));
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);

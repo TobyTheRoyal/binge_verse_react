@@ -138,7 +138,7 @@ export function useWatchlist() {
       return;
     }
     try {
-      await axiosClient.post('/watchlist/rate', { tmdbId, score });
+      await axiosClient.post('/ratings', { tmdbId, rating: score });
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);
     } catch (err) {

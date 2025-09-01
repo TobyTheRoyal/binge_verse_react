@@ -16,7 +16,7 @@ const Rating: React.FC = () => {
     setSelectedContentId(contentId);
     const selected = ratings.find((r) => r.content.id === contentId);
     setSelectedContentTitle(selected?.title ?? "Unknown");
-    setRatingScore(selected ? String(selected.score) : "");
+    setRatingScore(selected ? String(selected.rating) : "");
   };
 
   const closeRatingModal = () => {
@@ -61,7 +61,7 @@ const Rating: React.FC = () => {
                 {rating.title || `TMDb ID: ${rating.content.tmdbId}`} (
                 {rating.content.type})
               </p>
-              <p>Score: {rating.score}</p>
+              <p>Score: {rating.rating}</p>
               <p>
                 Rated At: {new Date(rating.ratedAt).toLocaleDateString()}
               </p>
