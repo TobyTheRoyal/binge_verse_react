@@ -54,7 +54,7 @@ export function useWatchlist() {
   const getWatchlist = useCallback(async () => {
     if (!token) return [];
     try {
-      const { data } = await axiosClient.get<WatchlistItem[]>("/api/watchlist");
+      const { data } = await axiosClient.get<WatchlistItem[]>("/watchlist");
       setAllContents(data);
       setFilteredContents(filterContentList(data));
       return data;
@@ -80,7 +80,7 @@ export function useWatchlist() {
       try {
         const { data } = await axiosClient.post<
           WatchlistItem | { content: WatchlistItem }
-        >("/api/watchlist", {
+        >("/watchlist/add", {
           tmdbId: item.id,
           type: item.type,
         });
@@ -102,7 +102,7 @@ export function useWatchlist() {
     async (tmdbId: string) => {
       if (!token) return;
       try {
-        await axiosClient.delete(`/api/watchlist/${tmdbId}`);
+        await axiosClient.delete(`/watchlist/user/${tmdbId}`);
         setAllContents((prev) => {
           const updated = prev.filter((i) => i.tmdbId !== tmdbId);
           setFilteredContents(filterContentList(updated));
@@ -138,7 +138,7 @@ export function useWatchlist() {
       return;
     }
     try {
-      await axiosClient.post('/api/ratings', { tmdbId, score });
+      await axiosClient.post('/watchlist/rate', { tmdbId, score });
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);
     } catch (err) {

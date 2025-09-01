@@ -47,13 +47,13 @@ export function useMovieDetail(id?: string) {
 
       // 2. Watchlist Status
       const { data: wl } = await axiosClient.get<WatchlistEntry[]>(
-        `/api/watchlist`
+        `/watchlist`
       );
       setIsInWL(wl.some((c) => c.tmdbId === id));
 
       // 3. User Ratings
       const { data: ratings } = await axiosClient.get<Rating[]>(
-        `/api/ratings`
+        `/ratings`
       );
       const myRating = ratings.find((r) => r.tmdbId === id)?.score ?? null;
       setUserRating(myRating);
@@ -72,10 +72,10 @@ export function useMovieDetail(id?: string) {
     if (!movie) return;
     try {
       if (isInWL) {
-        await axiosClient.delete(`/api/watchlist/${movie.tmdbId}`);
+        await axiosClient.delete(`/watchlist/user/${movie.tmdbId}`);
         setIsInWL(false);
       } else {
-        await axiosClient.post(`/api/watchlist`, {
+        await axiosClient.post(`/watchlist/add`, {
           tmdbId: movie.tmdbId,
           type: 'movie',
         });
@@ -90,7 +90,7 @@ export function useMovieDetail(id?: string) {
     async (score: number) => {
       if (!movie) return;
       try {
-        await axiosClient.post(`/api/ratings`, {
+        await axiosClient.post(`/ratings`, {
           tmdbId: movie.tmdbId,
           score,
         });
