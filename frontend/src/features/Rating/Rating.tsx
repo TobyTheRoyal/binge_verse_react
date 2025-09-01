@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRatings } from "../../hooks/useRatings";
 import styles from "./rating.module.scss";
 
@@ -7,6 +7,10 @@ const Rating: React.FC = () => {
   const [selectedContentId, setSelectedContentId] = useState<number | null>(null);
   const [selectedContentTitle, setSelectedContentTitle] = useState("");
   const [ratingScore, setRatingScore] = useState("");
+
+  useEffect(() => {
+    fetchUserRatings();
+  }, [fetchUserRatings]);
 
   const openRatingModal = (contentId: number) => {
     setSelectedContentId(contentId);
@@ -33,7 +37,7 @@ const Rating: React.FC = () => {
     try {
       await rateContent(selected.content.tmdbId, score);
       closeRatingModal();
-      await fetchUserRatings([selected.content.tmdbId]);
+      fetchUserRatings();
     } catch (err) {
       console.error("Failed to submit rating", err);
     }
