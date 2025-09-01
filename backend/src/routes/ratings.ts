@@ -21,6 +21,12 @@ export const createRatingsRouter = (
     res.status(204).end();
   });
 
+  router.get('/', async (req, res) => {
+    const user = (req as any).user;
+    const list = await ratingsService.getUserRatings(user.id);
+    res.json(list);
+  });
+
   router.get('/:tmdbId', async (req, res) => {
     const user = (req as any).user;
     const rating = await ratingsService.getRating(user.id, req.params.tmdbId);

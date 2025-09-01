@@ -14,4 +14,9 @@ import { RatingModel, RatingDocument } from '../models/rating';
     const doc = await RatingModel.findOne({ userId, tmdbId }).exec();
     return doc?.rating;
   }
+
+  async getUserRatings(userId: string): Promise<RatingDocument[]> {
+    const docs = await RatingModel.find({ userId }).exec();
+    return docs;
+  }
 }

@@ -11,7 +11,7 @@ export function useHistory() {
 
   const load = useCallback(async () => {
     const { data } = await axiosClient.get<HistoryItem[]>(
-      '/api/history'
+      '/history'
     );
     setItems(data);
   }, []);
