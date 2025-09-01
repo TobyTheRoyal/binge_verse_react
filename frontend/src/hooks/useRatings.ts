@@ -18,7 +18,7 @@ export function useRatings() {
   const fetchUserRatings = useCallback(async () => {
     try {
       const { data } = await axiosClient.get<RatingItem[]>(
-        '/api/ratings'
+        '/ratings'
       );
       setRatings(data);
     } catch (err) {
@@ -28,7 +28,7 @@ export function useRatings() {
 
   const rateContent = useCallback(async (tmdbId: string, score: number) => {
     try {
-      await axiosClient.post("/api/ratings", { tmdbId, score });
+      await axiosClient.post("/ratings", { tmdbId, score });
     } catch (err) {
       console.error("Failed to submit rating", err);
     }

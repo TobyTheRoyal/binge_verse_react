@@ -107,7 +107,7 @@ export function useSeriesDetail(id?: string) {
       return;
     }
     try {
-       await axiosClient.post('/api/ratings', {
+       await axiosClient.post('/ratings', {
         tmdbId: series.tmdbId,
         score,
       });

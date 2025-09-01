@@ -70,7 +70,7 @@ export function useSeries() {
       return;
     }
     try {
-      await axiosClient.post('/api/ratings', { tmdbId, score });
+      await axiosClient.post('/ratings', { tmdbId, score });
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);
     } catch (err) {
