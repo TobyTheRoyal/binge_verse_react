@@ -77,10 +77,10 @@ export function useSeriesDetail(id?: string) {
     if (!series) return;
     try {
       if (isInWL) {
-        await axiosClient.delete(`/watchlist/user/${series.tmdbId}`);
+        await axiosClient.delete(`/watchlist/${series.tmdbId}`);
         setIsInWL(false);
       } else {
-        await axiosClient.post(`/watchlist/add`, {
+        await axiosClient.post(`/watchlist`, {
           tmdbId: series.tmdbId,
           type: 'tv',
         });

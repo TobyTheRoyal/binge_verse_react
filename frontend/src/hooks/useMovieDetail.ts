@@ -72,10 +72,10 @@ export function useMovieDetail(id?: string) {
     if (!movie) return;
     try {
       if (isInWL) {
-        await axiosClient.delete(`/watchlist/user/${movie.tmdbId}`);
+        await axiosClient.delete(`/watchlist/${movie.tmdbId}`);
         setIsInWL(false);
       } else {
-        await axiosClient.post(`/watchlist/add`, {
+        await axiosClient.post(`/watchlist`, {
           tmdbId: movie.tmdbId,
           type: 'movie',
         });

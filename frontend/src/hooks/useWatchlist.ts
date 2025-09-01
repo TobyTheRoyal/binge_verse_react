@@ -80,7 +80,7 @@ export function useWatchlist() {
       try {
         const { data } = await axiosClient.post<
           WatchlistItem | { content: WatchlistItem }
-        >("/watchlist/add", {
+        >("/watchlist", {
           tmdbId: item.id,
           type: item.type,
         });
@@ -102,7 +102,7 @@ export function useWatchlist() {
     async (tmdbId: string) => {
       if (!token) return;
       try {
-        await axiosClient.delete(`/watchlist/user/${tmdbId}`);
+        await axiosClient.delete(`/watchlist/${tmdbId}`);
         setAllContents((prev) => {
           const updated = prev.filter((i) => i.tmdbId !== tmdbId);
           setFilteredContents(filterContentList(updated));

@@ -145,10 +145,10 @@ export function useMovies() {
   const isInWatchlist = (id: string) => watchlist.includes(id);
   const toggleWatchlist = async (id: string) => {
     if (isInWatchlist(id)) {
-      await axiosClient.delete(`/watchlist/user/${id}`);
+      await axiosClient.delete(`/watchlist/${id}`);
       setWatchlist((prev) => prev.filter((x) => x !== id));
     } else {
-      await axiosClient.post(`/watchlist/add`, {
+      await axiosClient.post(`/watchlist`, {
         tmdbId: id,
         type: 'movie',
       });
