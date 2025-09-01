@@ -4,16 +4,14 @@ import axiosClient from "../../api/axiosClient";
 import FilterControls from "../FilterControls/FilterControls";
 
 interface RatedContent {
-  content: {
-    tmdbId: string;
-    title?: string;
-    poster?: string;
-    releaseYear?: number;
-    imdbRating?: number;
-    rtRating?: number;
-    genres?: string;
-    providers?: string;
-  };
+  tmdbId: string;
+  title?: string;
+  poster?: string;
+  releaseYear?: number;
+  imdbRating?: number;
+  rtRating?: number;
+  genres?: string;
+  providers?: string;
   rating: number;
 }
 
@@ -66,22 +64,22 @@ const History: React.FC = () => {
     // apply filters
     setFilteredHistory(
       history.filter((h) => {
-        const c = h.content;
+        
         if (filters.genres.length > 0) {
-          const contentGenres = c.genres?.split(",").map((g) => g.trim()) ?? [];
+          const contentGenres = h.genres?.split(",").map((g) => g.trim()) ?? [];
           if (!filters.genres.some((g) => contentGenres.includes(g))) return false;
         }
         if (filters.providers.length > 0) {
-          const contentProviders = c.providers?.split(",").map((p) => p.trim()) ?? [];
+          const contentProviders = h.providers?.split(",").map((p) => p.trim()) ?? [];
           if (!filters.providers.some((p) => contentProviders.includes(p))) return false;
         }
-        const year = c.releaseYear ?? 0;
+        const year = h.releaseYear ?? 0;
         if (year < filters.releaseYearMin || year > filters.releaseYearMax) return false;
         if (filters.imdbRatingMin > 0) {
-          if (c.imdbRating == null || c.imdbRating < filters.imdbRatingMin) return false;
+          if (h.imdbRating == null || h.imdbRating < filters.imdbRatingMin) return false;
         }
         if (filters.rtRatingMin > 0) {
-          if (c.rtRating == null || c.rtRating < filters.rtRatingMin) return false;
+          if (h.rtRating == null || h.rtRating < filters.rtRatingMin) return false;
         }
         if (filters.userRatingMin > 0) {
           if (h.rating == null || h.rating < filters.userRatingMin) return false;
@@ -194,22 +192,22 @@ const History: React.FC = () => {
       <div className="content-list">
         {filteredHistory.map((entry) => (
           <div
-            key={entry.content.tmdbId}
+            key={entry.tmdbId}
             className="content-card"
             onMouseLeave={stopRating}
-            onClick={() => onCardClick(entry.content.tmdbId)}
+            onClick={() => onCardClick(entry.tmdbId)}
           >
             <div
               className="card-image"
               style={{
-                backgroundImage: `url(${entry.content.poster || "https://placehold.co/200x300"})`,
+                backgroundImage: `url(${entry.poster || "https://placehold.co/200x300"})`,
               }}
             >
               <button
                 className="rating-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  startRating(entry.content.tmdbId);
+                  startRating(entry.tmdbId);
                 }}
               >
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -217,7 +215,7 @@ const History: React.FC = () => {
                 </svg>
               </button>
 
-              {selectedContentId === entry.content.tmdbId && !isRatingSubmitted && (
+              {selectedContentId === entry.tmdbId && !isRatingSubmitted && (
                 <>
                   <div className="rating-overlay"></div>
                   <div className="rating-input-container">
@@ -225,7 +223,7 @@ const History: React.FC = () => {
                       <button className="close-btn" onClick={stopRating}>
                         ✕
                       </button>
-                      <h3>Rate “{entry.content.title}”</h3>
+                      <h3>Rate “{entry.title}”</h3>
                       <input
                         type="text"
                         value={ratingScore}
@@ -233,12 +231,12 @@ const History: React.FC = () => {
                         placeholder="0.0 – 10.0"
                         className="rating-input-field"
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") submitRating(entry.content.tmdbId);
+                          if (e.key === "Enter") submitRating(entry.tmdbId);
                         }}
                       />
                       <button
                         className="submit-rating-btn"
-                        onClick={() => submitRating(entry.content.tmdbId)}
+                        onClick={() => submitRating(entry.tmdbId)}
                       >
                         Submit
                       </button>
@@ -256,7 +254,7 @@ const History: React.FC = () => {
             </div>
 
             <p className="card-title">
-              {entry.content.title} ({entry.content.releaseYear})
+              {entry.title} ({entry.releaseYear})
             </p>
 
             <div className="ratings-container">
@@ -266,8 +264,8 @@ const History: React.FC = () => {
                   alt="IMDb"
                   className="rating-icon imdb-rating-icon"
                 />
-                {entry.content.imdbRating != null
-                  ? entry.content.imdbRating.toFixed(1)
+                {entry.imdbRating != null
+                  ? entry.imdbRating.toFixed(1)
                   : "N/A"}
               </div>
               <div className="rt-rating">
@@ -276,8 +274,8 @@ const History: React.FC = () => {
                   alt="Rotten Tomatoes"
                   className="rating-icon rt-rating-icon"
                 />
-                {entry.content.rtRating != null
-                  ? `${entry.content.rtRating.toFixed(0)}%`
+                {entry.rtRating != null
+                  ? `${entry.rtRating.toFixed(0)}%`
                   : "N/A"}
               </div>
             </div>

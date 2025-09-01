@@ -2,11 +2,9 @@ import { useState, useCallback } from "react";
 import axiosClient from "../api/axiosClient";
 
 export interface RatingItem {
-  content: {
-    id: number;
-    tmdbId: string;
-    type: string;
-  };
+  id: number;
+  tmdbId: string;
+  type: string;
   title?: string;
   poster?: string;
   rating: number;
@@ -36,7 +34,7 @@ export function useRatings() {
 
   const getRating = useCallback(
     (tmdbId: string): number | null => {
-      const rating = ratings.find((r) => r.content.tmdbId === tmdbId);
+      const rating = ratings.find((r) => r.tmdbId === tmdbId);
       return rating ? rating.rating : null;
     },
     [ratings]

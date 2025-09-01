@@ -14,7 +14,7 @@ const Rating: React.FC = () => {
 
   const openRatingModal = (contentId: number) => {
     setSelectedContentId(contentId);
-    const selected = ratings.find((r) => r.content.id === contentId);
+    const selected = ratings.find((r) => r.id === contentId);
     setSelectedContentTitle(selected?.title ?? "Unknown");
     setRatingScore(selected ? String(selected.rating) : "");
   };
@@ -32,10 +32,10 @@ const Rating: React.FC = () => {
       return;
     }
     if (selectedContentId == null) return;
-    const selected = ratings.find((r) => r.content.id === selectedContentId);
+    const selected = ratings.find((r) => r.id === selectedContentId);
     if (!selected) return;
     try {
-      await rateContent(selected.content.tmdbId, score);
+      await rateContent(selected.tmdbId, score);
       closeRatingModal();
       fetchUserRatings();
     } catch (err) {
@@ -48,7 +48,7 @@ const Rating: React.FC = () => {
       <h2>My Ratings</h2>
       <div className={styles.ratingList}>
         {ratings.map((rating) => (
-          <div key={rating.content.id} className={styles.ratingItem}>
+          <div key={rating.id} className={styles.ratingItem}>
             {rating.poster && (
               <img
                 src={rating.poster}
@@ -58,8 +58,8 @@ const Rating: React.FC = () => {
             )}
             <div className={styles.ratingDetails}>
               <p>
-                {rating.title || `TMDb ID: ${rating.content.tmdbId}`} (
-                {rating.content.type})
+                {rating.title || `TMDb ID: ${rating.tmdbId}`} (
+                {rating.type})
               </p>
               <p>Score: {rating.rating}</p>
               <p>
@@ -67,7 +67,7 @@ const Rating: React.FC = () => {
               </p>
               <button
                 className={styles.ratingBtn}
-                onClick={() => openRatingModal(rating.content.id)}
+                onClick={() => openRatingModal(rating.id)}
               >
                 ⭐ Update Rating
               </button>
