@@ -6,14 +6,22 @@ import { ContentService, Content } from './contentService';
 export type WatchlistItem = Content & { rating?: number };
 
 export class WatchlistService {
-   private moviesService = new MoviesService(new ContentService());
+   private moviesService: MoviesService;
 
-  async addToWatchlist(userId: string, tmdbId: string): Promise<WatchlistDocument> {
-    const existing = await WatchlistModel.findOne({ userId, tmdbId }).exec();
+  constructor(contentService: ContentService) {
+    this.moviesService = new MoviesService(contentService);
+  }
+
+  async addToWatchlist(
+    userId: string,
+    tmdbId: string,
+    type: 'movie' | 'tv',
+  ): Promise<WatchlistDocument> {
+    const existing = await WatchlistModel.findOne({ userId, tmdbId, type }).exec();
     if (existing) {
       return existing;
     }
-    const item = new WatchlistModel({ userId, tmdbId });
+    const item = new WatchlistModel({ userId, tmdbId, type});
     return item.save();
   }
 
