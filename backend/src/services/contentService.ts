@@ -105,6 +105,43 @@ export class ContentService {
     }
   }
 
+  async getContentDetails(
+    tmdbId: string,
+    type: 'movie' | 'tv'
+  ): Promise<Content | null> {
+    const apiKey = process.env.TMDB_API_KEY;
+    const url = `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${apiKey}`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.status_message || 'TMDB request failed');
+      }
+      const titleField = type === 'tv' ? data.name : data.title;
+      const dateField =
+        type === 'tv' ? data.first_air_date : data.release_date;
+      const content: Content = {
+        id: data.id,
+        tmdbId: String(data.id),
+        title: titleField || '',
+        releaseYear: dateField ? parseInt(dateField.slice(0, 4), 10) : 0,
+        poster: data.poster_path
+          ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
+          : '',
+        type,
+      };
+      const omdb = await this.fetchOmdbData(data.imdb_id);
+      if (omdb) {
+        content.imdbRating = omdb.imdbRating ?? null;
+        content.rtRating = omdb.rtRating ?? null;
+      }
+      return content;
+    } catch (err) {
+      console.error(`Failed to fetch ${type} ${tmdbId}`, err);
+      return null;
+    }
+  }
+
 
   async getTrending(): Promise<Content[]> {
     if (this.cacheTrending.length === 0) {

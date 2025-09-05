@@ -20,9 +20,13 @@ export const createWatchlistRouter = (
 
   router.post('/', async (req, res) => {
     const user = (req as any).user;
-    const { tmdbId } = req.body;
-    const item = await watchlistService.addToWatchlist(user.id, tmdbId);
-    res.status(201).json(item);
+    const { tmdbId, type } = req.body;
+    const content = await watchlistService.addToWatchlist(
+      user.id,
+      tmdbId,
+      type,
+    );
+    res.status(201).json({ content });
   });
 
   router.delete('/:tmdbId', async (req, res) => {

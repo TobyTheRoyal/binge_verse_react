@@ -6,10 +6,10 @@ import { useFilters, FilterOptions } from "./useFilters";
 export interface WatchlistItem {
   tmdbId: string;
   title: string;
-  releaseYear?: number;
-  poster?: string;
-  imdbRating?: number;
-  rtRating?: number;
+  releaseYear: number;
+  poster: string;
+  imdbRating: number | null;
+  rtRating: number | null;
   genres?: string[];
   providers?: string[];
   type: "movie" | "tv";
