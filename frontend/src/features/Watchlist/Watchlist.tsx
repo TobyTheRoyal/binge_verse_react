@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useWatchlist } from "../../hooks/useWatchlist";
-import styles from "./watchlist.module.scss";
+import { useRatings } from "../../hooks/useRatings";
+import styles from "./Watchlist.module.scss";
 
 const Watchlist: React.FC = () => {
   const {
@@ -17,6 +18,12 @@ const Watchlist: React.FC = () => {
     setRatingScore,
     isRatingSubmitted,
   } = useWatchlist();
+
+  const { fetchUserRatings, getRating } = useRatings();
+
+  useEffect(() => {
+    fetchUserRatings();
+  }, [fetchUserRatings]);
 
   return (
     <div className={styles.watchlistContainer}>
@@ -102,13 +109,16 @@ const Watchlist: React.FC = () => {
                         onChange={(e) => setRatingScore(e.target.value)}
                         placeholder="0.0 – 10.0"
                         onKeyDown={(e) =>
-                          e.key === "Enter" && submitRating(item.tmdbId)
+                          e.key === "Enter" &&
+                          submitRating(item.tmdbId).then(fetchUserRatings)
                         }
                         className={styles.ratingInputField}
                       />
                       <button
                         className={styles.submitRatingBtn}
-                        onClick={() => submitRating(item.tmdbId)}
+                        onClick={() =>
+                          submitRating(item.tmdbId).then(fetchUserRatings)
+                        }
                       >
                         Submit
                       </button>
@@ -117,10 +127,10 @@ const Watchlist: React.FC = () => {
                 </>
               )}
 
-              {item.rating != null && (
+              {getRating(item.tmdbId) !== null && (
                 <div className={styles.ownRatingTag}>
                   <span className={styles.starIcon}>★</span>
-                  {item.rating.toFixed(1)}
+                  {getRating(item.tmdbId)?.toFixed(1)}
                 </div>
               )}
             </div>

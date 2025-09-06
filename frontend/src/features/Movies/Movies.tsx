@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo} from "react";
 import { useMovies } from "../../hooks/useMovies";
+import { useRatings } from "../../hooks/useRatings";
 import FilterControls from "../FilterControls/FilterControls";
 import styles from "./Movies.module.scss";
 import { useNavigate } from "react-router-dom";
@@ -37,8 +38,10 @@ const Movies: React.FC = () => {
     isRatingSubmitted,
     toggleWatchlist,
     isInWatchlist,
-    getRating,
+
   } = useMovies();
+
+   const { fetchUserRatings, getRating } = useRatings();
 
   const navigate = useNavigate();
 
@@ -63,6 +66,10 @@ const Movies: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
     }, [handleScroll]);
+
+  useEffect(() => {
+    fetchUserRatings();
+  }, [fetchUserRatings]);
 
   const onCardClick = (tmdbId: string) => {
     if (selectedContentId) return;
@@ -191,13 +198,19 @@ const Movies: React.FC = () => {
                         onChange={(e) => setRatingScore(e.target.value)}
                         placeholder="0.0 – 10.0"
                         className={styles.ratingInputField}
-                        onKeyDown={(e) =>
-                          e.key === "Enter" && submitRating(item.tmdbId)
-                        }
+                        onKeyDown={async (e) => {
+                          if (e.key === "Enter") {
+                            await submitRating(item.tmdbId);
+                            fetchUserRatings();
+                          }
+                        }}
                       />
                       <button
                         className={styles.submitRatingBtn}
-                        onClick={() => submitRating(item.tmdbId)}
+                        onClick={async () => {
+                          await submitRating(item.tmdbId);
+                          fetchUserRatings();
+                        }}
                       >
                         Submit
                       </button>

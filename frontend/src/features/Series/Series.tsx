@@ -34,6 +34,9 @@ const Series: React.FC = () => {
   const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
   const { fetchUserRatings, getRating } = useRatings();
 
+  const submitRatingWithRefresh = (tmdbId: string) =>
+    submitRating(tmdbId).then(fetchUserRatings);
+
   useEffect(() => {
     fetchUserRatings();
   }, [fetchUserRatings]);
@@ -176,13 +179,13 @@ const Series: React.FC = () => {
                         className={styles.ratingInputField}
                         onKeyDown={(e) =>
                           e.key === "Enter" &&
-                          submitRating(s.tmdbId).then(fetchUserRatings)
+                          submitRatingWithRefresh(s.tmdbId)
                         }
                       />
                       <button
                         className={styles.submitRatingBtn}
                         onClick={() =>
-                          submitRating(s.tmdbId).then(fetchUserRatings)
+                          submitRatingWithRefresh(s.tmdbId)
                         }
                       >
                         Submit
