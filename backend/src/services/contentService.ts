@@ -116,7 +116,9 @@ export class ContentService {
     type: 'movie' | 'tv'
   ): Promise<Content | null> {
     const apiKey = process.env.TMDB_API_KEY;
-    const url = `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${apiKey}`;
+    const url = `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${apiKey}${
+      type === 'tv' ? '&append_to_response=external_ids' : ''
+    }`;
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -136,7 +138,11 @@ export class ContentService {
           : '',
         type,
       };
-      const omdb = await this.fetchOmdbData(data.imdb_id);
+      const imdbId = data.imdb_id || data.external_ids?.imdb_id;
+      let omdb: { imdbRating: number | null; rtRating: number | null } | null = null;
+      if (imdbId) {
+        omdb = await this.fetchOmdbData(imdbId);
+      }
       if (omdb) {
         content.imdbRating = omdb.imdbRating ?? null;
         content.rtRating = omdb.rtRating ?? null;
