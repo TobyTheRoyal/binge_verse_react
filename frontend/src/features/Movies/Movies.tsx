@@ -1,8 +1,20 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useMemo} from "react";
 import { useMovies } from "../../hooks/useMovies";
 import FilterControls from "../FilterControls/FilterControls";
 import styles from "./Movies.module.scss";
 import { useNavigate } from "react-router-dom";
+
+// Simple throttle utility to limit how often a function can fire
+const throttle = <T extends (...args: any[]) => void>(fn: T, wait: number) => {
+  let last = 0;
+  return (...args: Parameters<T>) => {
+    const now = Date.now();
+    if (now - last >= wait) {
+      last = now;
+      fn(...args);
+    }
+  };
+};
 
 const Movies: React.FC = () => {
   const {
@@ -31,19 +43,26 @@ const Movies: React.FC = () => {
   const navigate = useNavigate();
 
   // Infinite Scroll
+  const handleScroll = useMemo(
+    () =>
+      throttle(() => {
+        if (!hasMore || isLoading) return;
+        const threshold = 300;
+        const pos = window.innerHeight + window.scrollY;
+        const height = document.body.offsetHeight;
+        if (height - pos < threshold) {
+          fetchNextPage();
+        }
+      }, 200),
+    [hasMore, isLoading, fetchNextPage]
+  );
+
   useEffect(() => {
-    const onScroll = () => {
-      if (!hasMore || isLoading) return;
-      const threshold = 300;
-      const pos = window.innerHeight + window.scrollY;
-      const height = document.body.offsetHeight;
-      if (height - pos < threshold) {
-        fetchNextPage();
-      }
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
     };
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [hasMore, isLoading, fetchNextPage]);
+    }, [handleScroll]);
 
   const onCardClick = (tmdbId: string) => {
     if (selectedContentId) return;
