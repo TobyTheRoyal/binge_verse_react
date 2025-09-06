@@ -15,4 +15,10 @@ export class MoviesService {
     }
     return undefined;
   }
+  async listMovies(page: number, _filters: any): Promise<Content[]> {
+    const all = await this.contentService.getTrending();
+    const pageSize = 20;
+    const start = (page - 1) * pageSize;
+    return all.slice(start, start + pageSize);
+  }
 }

@@ -4,6 +4,20 @@ import { MoviesService } from '../services/moviesService';
 export const createMoviesRouter = (moviesService: MoviesService) => {
   const router = Router();
 
+  router.get('/', async (req: Request, res: Response): Promise<void> => {
+    const page = parseInt(req.query.page as string, 10) || 1;
+    let filters: any = {};
+    if (typeof req.query.filters === 'string') {
+      try {
+        filters = JSON.parse(req.query.filters as string);
+      } catch {
+        // ignore parse errors
+      }
+    }
+    const movies = await moviesService.listMovies(page, filters);
+    res.json(movies);
+  });
+  
   router.get(
     '/:tmdbId',
     async (req: Request, res: Response): Promise<void> => {
