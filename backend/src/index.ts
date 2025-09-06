@@ -9,11 +9,13 @@ import { ContentService } from './services/contentService';
 import { WatchlistService } from './services/watchlistService';
 import { RatingsService } from './services/ratingsService';
 import { MoviesService } from './services/moviesService';
+import { SeriesService } from './services/seriesService';
 import { createAuthRouter } from './routes/auth';
 import { createContentRouter } from './routes/content';
 import { createWatchlistRouter } from './routes/watchlist';
 import { createRatingsRouter } from './routes/ratings';
 import { createMoviesRouter } from './routes/movies';
+import { createSeriesRouter } from './routes/series';
 import { createUsersRouter } from './routes/users';
 
 dotenv.config();
@@ -29,6 +31,7 @@ const contentService = new ContentService();
 const watchlistService = new WatchlistService(contentService);
 const ratingsService = new RatingsService();
 const moviesService = new MoviesService(contentService);
+const seriesService = new SeriesService(contentService);
 
 // Schedule cache updates replacing Nest ScheduleModule with node-cron
 cron.schedule('0 2 * * *', () => contentService.updateHomeCaches());
@@ -52,6 +55,7 @@ async function start() {
     app.use('/watchlist', createWatchlistRouter(watchlistService));
     app.use('/ratings', createRatingsRouter(ratingsService));
     app.use('/movies', createMoviesRouter(moviesService));
+    app.use('/series', createSeriesRouter(seriesService));
     app.use('/users', createUsersRouter(usersService));
 
     app.listen(port, () => {

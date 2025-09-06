@@ -13,15 +13,19 @@ export class ContentService {
   private cacheTrending: Content[] = [];
   private cacheTopRated: Content[] = [];
   private cacheNewReleases: Content[] = [];
+  private cacheTrendingSeries: Content[] = [];
+  private cacheTopRatedSeries: Content[] = [];
   private updatingHome = false;
 
   async updateHomeCaches() {
     if (this.updatingHome) return;
     this.updatingHome = true;
     try {
-      this.cacheTrending = await this.fetchHomeList('/trending/movie/week');
-      this.cacheTopRated = await this.fetchHomeList('/movie/top_rated');
-      this.cacheNewReleases = await this.fetchHomeList('/movie/now_playing');
+      this.cacheTrending = await this.fetchHomeList('/trending/movie/week', 'movie');
+      this.cacheTopRated = await this.fetchHomeList('/movie/top_rated', 'movie');
+      this.cacheNewReleases = await this.fetchHomeList('/movie/now_playing', 'movie');
+      this.cacheTrendingSeries = await this.fetchHomeList('/trending/tv/week', 'tv');
+      this.cacheTopRatedSeries = await this.fetchHomeList('/tv/top_rated', 'tv');
     } catch (err) {
       console.error('Failed to update home caches', err);
     } finally {
@@ -29,7 +33,7 @@ export class ContentService {
     }
   }
 
-  private async fetchHomeList(endpoint: string): Promise<Content[]> {
+  private async fetchHomeList(endpoint: string, type: 'movie' | 'tv'): Promise<Content[]> {
     const url = `https://api.themoviedb.org/3${endpoint}?api_key=${process.env.TMDB_API_KEY}`;
     try {
       const res = await fetch(url);
@@ -38,7 +42,7 @@ export class ContentService {
         throw new Error(data?.status_message || 'TMDB request failed');
       }
       const items = await Promise.all(
-        (data.results || []).slice(0, 20).map((r: any) => this.fetchHomeItem(r.id))
+        (data.results || []).slice(0, 20).map((r: any) => this.fetchHomeItem(r.id, type))
       );
       return items.filter(Boolean) as Content[];
     } catch (err) {
@@ -47,8 +51,8 @@ export class ContentService {
     }
   }
 
-  private async fetchHomeItem(id: number): Promise<Content | null> {
-    const url = `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.TMDB_API_KEY}`;
+  private async fetchHomeItem(id: number, type: 'movie' | 'tv'): Promise<Content | null> {
+    const url = `https://api.themoviedb.org/3/${type}/${id}?api_key=${process.env.TMDB_API_KEY}`;
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -58,12 +62,14 @@ export class ContentService {
       const content: Content = {
         id: data.id,
         tmdbId: String(data.id),
-        title: data.title,
-        releaseYear: data.release_date ? parseInt(data.release_date.slice(0, 4), 10) : 0,
+        title: type === 'tv' ? data.name : data.title,
+        releaseYear: (type === 'tv' ? data.first_air_date : data.release_date)
+          ? parseInt((type === 'tv' ? data.first_air_date : data.release_date).slice(0, 4), 10)
+          : 0,
         poster: data.poster_path
           ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
           : '',
-        type: 'movie',
+        type,
       };
       const omdb = await this.fetchOmdbData(data.imdb_id);
       if (omdb) {
@@ -162,6 +168,20 @@ export class ContentService {
       await this.updateHomeCaches();
     }
     return this.cacheNewReleases;
+  }
+
+  async getTrendingSeries(): Promise<Content[]> {
+    if (this.cacheTrendingSeries.length === 0) {
+      await this.updateHomeCaches();
+    }
+    return this.cacheTrendingSeries;
+  }
+
+  async getTopRatedSeries(): Promise<Content[]> {
+    if (this.cacheTopRatedSeries.length === 0) {
+      await this.updateHomeCaches();
+    }
+    return this.cacheTopRatedSeries;
   }
 
   async searchTmdb(query: string): Promise<Content[]> {
