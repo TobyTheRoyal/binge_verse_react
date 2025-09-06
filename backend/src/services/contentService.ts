@@ -52,7 +52,9 @@ export class ContentService {
   }
 
   private async fetchHomeItem(id: number, type: 'movie' | 'tv'): Promise<Content | null> {
-    const url = `https://api.themoviedb.org/3/${type}/${id}?api_key=${process.env.TMDB_API_KEY}`;
+    const url = `https://api.themoviedb.org/3/${type}/${id}?api_key=${process.env.TMDB_API_KEY}${
+      type === 'tv' ? '&append_to_response=external_ids' : ''
+    }`;
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -71,10 +73,13 @@ export class ContentService {
           : '',
         type,
       };
-      const omdb = await this.fetchOmdbData(data.imdb_id);
-      if (omdb) {
-        content.imdbRating = omdb.imdbRating ?? null;
-        content.rtRating = omdb.rtRating ?? null;
+      const imdbId = data.imdb_id || data.external_ids?.imdb_id;
+      if (imdbId) {
+        const omdb = await this.fetchOmdbData(imdbId);
+        if (omdb) {
+          content.imdbRating = omdb.imdbRating ?? null;
+          content.rtRating = omdb.rtRating ?? null;
+        }
       }
       return content;
     } catch (err) {
