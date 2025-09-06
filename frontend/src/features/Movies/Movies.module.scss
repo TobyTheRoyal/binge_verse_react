@@ -1,5 +1,5 @@
 @use '../../styles/variables';
-@use '../../styles/content-card';
+@use '../../styles/content-card' as *;
 
 .moviesContainer {
   background: variables.$primary-color;
@@ -153,7 +153,9 @@ h2 {
       min-height: 36px;
       gap: variables.$spacing-xs;
 
-      .ratingIcon {
+      .ratingIcon,
+      .imdbRatingIcon,
+      .rtRatingIcon {
         width: 14px;
         height: 14px;
       }
@@ -178,7 +180,9 @@ h2 {
       min-height: 32px;
       gap: variables.$spacing-xs;
 
-      .ratingIcon {
+      .ratingIcon,
+      .imdbRatingIcon,
+      .rtRatingIcon {
         width: 12px;
         height: 12px;
       }

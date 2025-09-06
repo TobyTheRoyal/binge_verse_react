@@ -1,7 +1,7 @@
 @use '../styles/variables';
 @use '../styles/content-card';
 
-.home-container {
+.homeContainer {
   background: linear-gradient(135deg, variables.$primary-color 60%, variables.$accent-color 100%);
   padding: variables.$spacing-xl variables.$spacing-xl;
   min-height: 100vh;
@@ -15,7 +15,7 @@
 }
 
 /* ===================== Hero Section ===================== */
-.hero-section {
+.heroSection {
   position: relative;
   width: 100%;
   max-width: 1400px;
@@ -34,7 +34,7 @@
     z-index: 1;
   }
 
-  .hero-content {
+  .heroContent {
     position: relative;
     padding: 100px 48px 80px 48px;
     text-align: center;
@@ -61,7 +61,7 @@
       animation: fadeInUp 1s 0.4s both;
     }
 
-    .hero-button {
+    .heroButton {
       background: linear-gradient(90deg, variables.$accent-color 60%, #00a899 100%);
       color: #fff;
       border: none;
@@ -88,12 +88,12 @@
   }
 }
 
-.loading-placeholder {
+.loadingPlaceholder {
   display: flex;
   gap: 32px;
   padding: 16px 0;
 
-  .skeleton-card {
+  .skeletonCard {
     flex: 0 0 auto;
     width: 220px;
     aspect-ratio: 5 / 9;
@@ -118,7 +118,7 @@
   to   { opacity: 1; transform: none; }
 }
 /* Category Section */
-.category-section {
+.categorySection {
   width: 100%;
   margin: 0;
   padding: variables.$spacing-md 0;
@@ -134,12 +134,12 @@
     animation: fadeInUp 1s 0.2s both;
   }
 
-  .slider-container {
+  .sliderContainer {
     position: relative;
     overflow: hidden;
     padding: 0;
 
-    &:hover .slider-arrow {
+    &:hover .sliderArrow {
       opacity: 1;
       transform: scale(1.1);
     }
@@ -147,7 +147,7 @@
 
 
 /* Scrollable List */
-.scroll-container {
+.scrollContainer {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   padding: 16px 0;
@@ -163,7 +163,7 @@
   }
 }
 
-.content-list {
+.contentList {
   display: flex;
   gap: 32px;
   padding: 0;
@@ -171,7 +171,7 @@
 }
 
 /* Card sizing overrides for home slider */
-.content-card {
+.contentCard {
   flex: 0 0 auto;
   width: 220px;
   aspect-ratio: 5 / 9;
@@ -193,7 +193,7 @@
     outline-offset: 2px;
   }
 
-  .card-image {
+  .cardImage {
     aspect-ratio: 20 / 27;
     height: auto;
     border-radius: 14px 14px 0 0;
@@ -202,7 +202,7 @@
   }
 }
 /* Arrow Buttons */
-.slider-arrow {
+.sliderArrow {
   position: absolute;
   top: 35%;
   transform: translateY(-50%);
@@ -247,27 +247,27 @@
     }
   }
 }
-.left-arrow  { left: 8px; z-index: 10; }
-.right-arrow { right: 8px; z-index: 10; }
+.leftArrow  { left: 8px; z-index: 10; }
+.rightArrow { right: 8px; z-index: 10; }
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .hero-content h1    { font-size: 2.5rem; }
-  .hero-content p     { font-size: 1.1rem; }
-  .content-card { width: 160px; aspect-ratio: 5 / 9; }
-  .slider-arrow { font-size: 1.1rem; padding: 12px; }
+  .heroContent h1    { font-size: 2.5rem; }
+  .heroContent p     { font-size: 1.1rem; }
+  .contentCard { width: 160px; aspect-ratio: 5 / 9; }
+  .sliderArrow { font-size: 1.1rem; padding: 12px; }
 }
 
 @media (max-width: 600px) {
-  .home-container { padding: variables.$spacing-lg variables.$spacing-md; }
-  .hero-content { padding: 48px 12px 32px 12px; }
-  .hero-content h1 { font-size: 1.5rem; }
-  .hero-content p { font-size: 0.95rem; }
-  .content-card { width: 120px; aspect-ratio: 5 / 9; }
-  .slider-arrow { display: none; }
+  .homeContainer { padding: variables.$spacing-lg variables.$spacing-md; }
+  .heroContent { padding: 48px 12px 32px 12px; }
+  .heroContent h1 { font-size: 1.5rem; }
+  .heroContent p { font-size: 0.95rem; }
+  .contentCard { width: 120px; aspect-ratio: 5 / 9; }
+  .sliderArrow { display: none; }
 }
 
-.hero-recommendation {
+.heroRecommendation {
   background-size: cover;
   background-position: center;
   min-height: 60vh;
@@ -288,7 +288,7 @@
     max-width: 520px;
     box-shadow: 0 2px 18px rgba(0,0,0,0.18);
 
-    .recommendation-reason {
+    .recommendationReason {
       font-size: 1.1rem;
       color: #e0e0e0;
       margin-bottom: 0.7rem;

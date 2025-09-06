@@ -222,7 +222,7 @@ const Movies: React.FC = () => {
                 <img
                   src="/assets/images/imdb-logo.png"
                   alt="IMDb"
-                  className={`${styles.ratingIcon} ${styles.imdbRatingIcon}`}
+                  className={[styles.ratingIcon, styles.imdbRatingIcon].join(' ')}
                 />
                 {item.imdbRating != null ? item.imdbRating.toFixed(1) : "N/A"}
               </div>
@@ -230,7 +230,7 @@ const Movies: React.FC = () => {
                 <img
                   src="/assets/images/rt-logo-cf.png"
                   alt="Rotten Tomatoes"
-                  className={`${styles.ratingIcon} ${styles.rtRatingIcon}`}
+                  className={[styles.ratingIcon, styles.rtRatingIcon].join(' ')}
                 />
                 {item.rtRating != null ? `${item.rtRating}%` : "N/A"}
               </div>

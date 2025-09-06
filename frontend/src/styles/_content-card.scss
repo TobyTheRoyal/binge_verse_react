@@ -1,6 +1,6 @@
 @use 'variables';
 
-.content-card {
+.contentCard {
   border-radius: variables.$border-radius-md;
   width: 100%;
   height: 360px;
@@ -17,7 +17,7 @@
     box-shadow: 0 12px 24px rgba(255, 0, 122, 0.4);
   }
 
-  .card-image {
+  .cardImage {
     width: 100%;
     aspect-ratio: 2 / 3;
     background-size: cover;
@@ -28,8 +28,8 @@
     overflow: hidden;
   }
 
-  .add-btn,
-  .rating-btn {
+  .addBtn,
+  .ratingBtn {
     position: absolute;
     width: 32px;
     height: 32px;
@@ -51,10 +51,10 @@
     }
   }
 
-  .add-btn { top: 12px; left: 12px; }
-  .rating-btn { top: 56px; left: 12px; }
+  .addBtn { top: 12px; left: 12px; }
+  .ratingBtn { top: 56px; left: 12px; }
 
-  .own-rating-tag {
+  .ownRatingTag {
     position: absolute;
     top: 12px;
     right: 12px;
@@ -70,7 +70,7 @@
     box-shadow: 0 0 6px rgba(255, 0, 122, 0.5);
   }
 
-  .rating-overlay {
+  .ratingOverlay {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
@@ -78,7 +78,7 @@
     z-index: 1;
   }
 
-  .rating-input-container {
+  .ratingInputContainer {
     position: absolute;
     inset: 0;
     display: flex;
@@ -87,7 +87,7 @@
     z-index: 2;
   }
 
-  .rating-card {
+  .ratingCard {
     background: rgba(42, 42, 42, 0.9);
     padding: variables.$spacing-lg;
     border-radius: variables.$border-radius-md;
@@ -98,7 +98,7 @@
     max-width: 240px;
     box-shadow: variables.$shadow-md;
 
-    .close-btn {
+    .closeBtn {
       position: absolute;
       top: 10px;
       right: 10px;
@@ -122,7 +122,7 @@
       text-align: center;
     }
 
-    .rating-input-field {
+    .ratingInputField {
       width: 100px;
       padding: variables.$spacing-sm;
       border: 2px solid variables.$accent-color;
@@ -141,7 +141,7 @@
       }
     }
 
-    .submit-rating-btn {
+    .submitRatingBtn {
       background: linear-gradient(135deg, variables.$accent-color, darken(variables.$accent-color, 15%));
       color: variables.$text-color;
       border: none;
@@ -161,7 +161,7 @@
     }
   }
 
-  .card-title {
+  .cardTitle {
     padding: variables.$spacing-sm variables.$spacing-md;
     font-size: 1rem;
     font-weight: 600;
@@ -177,7 +177,7 @@
     text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
   }
 
-  .ratings-container {
+  .ratingsContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -187,8 +187,8 @@
     font-weight: 600;
     min-height: 2rem;
 
-    .imdb-rating,
-    .rt-rating {
+    .imdbRating,
+    .rtRating {
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -197,10 +197,12 @@
       white-space: nowrap;
     }
 
-    .imdb-rating { color: #f5c518; }
-    .rt-rating  { color: #ff6f00; }
+    .imdbRating { color: #f5c518; }
+    .rtRating  { color: #ff6f00; }
 
-    .rating-icon {
+    .ratingIcon,
+    .imdbRatingIcon,
+    .rtRatingIcon {
       width: 16px;
       height: 16px;
       object-fit: contain;

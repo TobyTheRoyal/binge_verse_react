@@ -196,21 +196,21 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className={styles['home-container']}>
-      <section className={styles['hero-section']}>
-        <div className={styles['hero-content']}>
+    <div className={styles['homeContainer']}>
+      <section className={styles['heroSection']}>
+        <div className={styles['heroContent']}>
           <h1>Your personal streaming companion</h1>
           <p>rate, discover and keep track of what you love</p>
         </div>
       </section>
 
       {categories.map((category) => (
-        <section key={category.id} className={styles['category-section']}>
+        <section key={category.id} className={styles['categorySection']}>
           <h2>{category.title}</h2>
-          <div className={styles['slider-container']}>
+          <div className={styles['sliderContainer']}>
             {canScrollLeft(category.id) && (
               <button
-                className={`${styles['slider-arrow']} ${styles['left-arrow']}`}
+                className={`${styles['sliderArrow']} ${styles['leftArrow']}`}
                 onClick={() => scrollLeft(category.id)}
               >
                 <svg viewBox="0 0 24 24" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -220,17 +220,17 @@ const Home: React.FC = () => {
             )}
 
             <div
-              className={styles['scroll-container']}
+              className={styles['scrollContainer']}
               id={category.id}
               onScroll={() => updateScrollState(category.id)}
             >
-              <div className={styles['content-list']}>
+              <div className={styles['contentList']}>
                 {category.items.length > 0 ? (
                   category.items.map(item => (
                     <Link
                       to={`/movies/${item.tmdbId}`}
                       key={item.tmdbId}
-                      className={styles['content-card']}
+                      className={styles['contentCard']}
                       onMouseLeave={stopRating}
                       onClick={e => {
                         if (selectedContentId) {
@@ -239,11 +239,11 @@ const Home: React.FC = () => {
                       }}
                     >
                       <div
-                        className={styles['card-image']}
+                        className={styles['cardImage']}
                         style={{ backgroundImage: `url(${item.poster || 'https://placehold.co/200x300'})` }}
                       >
                         <button
-                          className={styles['add-btn']}
+                          className={styles['addBtn']}
                           onClick={e => {
                             e.preventDefault();
                             toggleWatchlist(item.tmdbId, item.type);
@@ -257,7 +257,7 @@ const Home: React.FC = () => {
                           </svg>
                         </button>
                         <button
-                          className={styles['rating-btn']}
+                          className={styles['ratingBtn']}
                           onClick={e => {
                             e.preventDefault();
                             startRating(category.id, item.tmdbId);
@@ -272,11 +272,11 @@ const Home: React.FC = () => {
                           selectedContentId === item.tmdbId &&
                           !isRatingSubmitted && (
                             <>
-                              <div className={styles['rating-overlay']} />
-                              <div className={styles['rating-input-container']}>
-                                <div className={styles['rating-card']}>
+                              <div className={styles['ratingOverlay']} />
+                              <div className={styles['ratingInputContainer']}>
+                                <div className={styles['ratingCard']}>
                                   <button
-                                    className={styles['close-btn']}
+                                    className={styles['closeBtn']}
                                     onClick={e => {
                                       e.preventDefault();
                                       stopRating();
@@ -290,7 +290,7 @@ const Home: React.FC = () => {
                                     type="text"
                                     value={ratingScore}
                                     placeholder="0.0 – 10.0"
-                                    className={styles['rating-input-field']}
+                                    className={styles['ratingInputField']}
                                     onChange={e => setRatingScore(e.target.value)}
                                     onKeyDown={e => {
                                       if (e.key === 'Enter') {
@@ -300,7 +300,7 @@ const Home: React.FC = () => {
                                     }}
                                   />
                                   <button
-                                    className={styles['submit-rating-btn']}
+                                    className={styles['submitRatingBtn']}
                                     onClick={e => {
                                       e.preventDefault();
                                       submitRating(item.tmdbId);
@@ -314,31 +314,31 @@ const Home: React.FC = () => {
                           )}
 
                         {getRating(item.tmdbId) != null && (
-                          <div className={styles['own-rating-tag']}>
-                            <span className={styles['star-icon']}>★</span>
+                          <div className={styles['ownRatingTag']}>
+                            <span className={styles['starIcon']}>★</span>
                             {getRating(item.tmdbId)?.toFixed(1)}
                           </div>
                         )}
                       </div>
 
-                      <p className={styles['card-title']}>
+                      <p className={styles['cardTitle']}>
                         {item.title} ({item.releaseYear})
                       </p>
 
-                      <div className={styles['ratings-container']}>
-                        <div className={styles['imdb-rating']}>
+                      <div className={styles['ratingsContainer']}>
+                        <div className={styles['imdbRating']}>
                           <img
                             src="/assets/images/imdb-logo.png"
                             alt="IMDb"
-                            className={styles['rating-icon']}
+                            className={styles['ratingIcon']}
                           />
                           {item.imdbRating != null ? item.imdbRating.toFixed(1) : 'N/A'}
                         </div>
-                        <div className={styles['rt-rating']}>
+                        <div className={styles['rtRating']}>
                           <img
                             src="/assets/images/rt-logo-cf.png"
                             alt="Rotten Tomatoes"
-                            className={styles['rating-icon']}
+                            className={styles['ratingIcon']}
                           />
                           {item.rtRating != null ? `${Math.round(item.rtRating)}%` : 'N/A'}
                         </div>
@@ -346,9 +346,9 @@ const Home: React.FC = () => {
                     </Link>
                   ))
                 ) : category.isLoading ? (
-                  <div className={styles['loading-placeholder']}>
+                  <div className={styles['loadingPlaceholder']}>
                     {placeholderItems.map((_, i) => (
-                      <div key={i} className={styles['skeleton-card']} />
+                      <div key={i} className={styles['skeletonCard']} />
                     ))}
                   </div>
                 ) : null}
@@ -357,7 +357,7 @@ const Home: React.FC = () => {
 
             {(category.id !== 'watchlist' || canScrollRight(category.id)) && (
               <button
-                className={`${styles['slider-arrow']} ${styles['right-arrow']}`}
+                className={`${styles['sliderArrow']} ${styles['rightArrow']}`}
                 onClick={() => scrollRight(category.id)}
               >
                 <svg viewBox="0 0 24 24" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
