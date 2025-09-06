@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import axiosClient from "../api/axiosClient";
+import type { FilterOptions } from "./useFilters";
 
 export interface SeriesItem {
   tmdbId: string;
@@ -10,7 +11,7 @@ export interface SeriesItem {
   rtRating?: number;
 }
 
-export function useSeries() {
+export function useSeries(filters?: FilterOptions) {
   const [series, setSeries] = useState<SeriesItem[]>([]);
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
   const [ratingScore, setRatingScore] = useState("");
@@ -20,26 +21,35 @@ export function useSeries() {
   const [hasMore, setHasMore] = useState(true);
 
   // ⭐ Fetch mit Paginierung
-  const fetchPage = useCallback(async (page: number, replace = false) => {
-    setIsLoading(true);
-    try {
-      const { data } = await axiosClient.get<SeriesItem[]>(`/api/series`, {
-        params: { page },
-      });
-      if (data.length === 0) {
-        setHasMore(false);
-      } else {
-        setSeries(prev => (replace ? data : [...prev, ...data]));
+  const fetchPage = useCallback(
+    async (page: number, replace = false) => {
+      setIsLoading(true);
+      try {
+        const params: Record<string, unknown> = { page };
+        if (filters) {
+          params.filters = JSON.stringify(filters);
+        }
+        const { data } = await axiosClient.get<SeriesItem[]>(`/series`, {
+          params,
+        });
+        if (data.length === 0) {
+          setHasMore(false);
+        } else {
+          setSeries(prev => (replace ? data : [...prev, ...data]));
+        }
+      } catch (err) {
+        console.error("Failed to load series", err);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to load series", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [filters]
+  );
 
   // Erste Ladung
   useEffect(() => {
+    setSeries([]);
+    setHasMore(true);
     fetchPage(1, true);
     setCurrentPage(2);
   }, [fetchPage]);

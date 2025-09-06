@@ -8,6 +8,15 @@ import styles from "./Series.module.scss";
 
 const Series: React.FC = () => {
   const navigate = useNavigate();
+   const {
+    filters,
+    updateFilters,
+    resetFilters,
+    toggleFilters,
+    showFilters,
+    hasActiveFilters,
+  } = useFilters();
+
   const {
     series,
     fetchNextPage,
@@ -19,16 +28,7 @@ const Series: React.FC = () => {
     startRating,
     stopRating,
     submitRating,
-  } = useSeries();
-
-  const {
-    filters,
-    updateFilters,
-    resetFilters,
-    toggleFilters,
-    showFilters,
-    hasActiveFilters,
-  } = useFilters();
+  } = useSeries(filters);
 
   const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
 
