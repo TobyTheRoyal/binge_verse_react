@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSeries } from "../../hooks/useSeries";
 import { useFilters } from "../../hooks/useFilters";
 import { useWatchlist } from "../../hooks/useWatchlist";
+import { useRatings } from "../../hooks/useRatings";
 import FilterControls from "../FilterControls/FilterControls";
 import styles from "./Series.module.scss";
 
@@ -31,6 +32,11 @@ const Series: React.FC = () => {
   } = useSeries(filters);
 
   const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
+  const { fetchUserRatings, getRating } = useRatings();
+
+  useEffect(() => {
+    fetchUserRatings();
+  }, [fetchUserRatings]);
 
   // infinite scroll
   useEffect(() => {
@@ -119,7 +125,16 @@ const Series: React.FC = () => {
                     : addToWatchlist({ id: s.tmdbId, type: "tv" });
                 }}
               >
-                {isInWatchlist(s.tmdbId) ? "♥" : "♡"}
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill={isInWatchlist(s.tmdbId) ? "currentColor" : "none"}
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                </svg>
               </button>
 
               {/* Rating Button */}
@@ -130,7 +145,14 @@ const Series: React.FC = () => {
                   startRating(s.tmdbId);
                 }}
               >
-                ★
+                <svg
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                >
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
               </button>
 
               {/* Rating Modal */}
@@ -153,18 +175,28 @@ const Series: React.FC = () => {
                         placeholder="0.0 – 10.0"
                         className={styles.ratingInputField}
                         onKeyDown={(e) =>
-                          e.key === "Enter" && submitRating(s.tmdbId)
+                          e.key === "Enter" &&
+                          submitRating(s.tmdbId).then(fetchUserRatings)
                         }
                       />
                       <button
                         className={styles.submitRatingBtn}
-                        onClick={() => submitRating(s.tmdbId)}
+                        onClick={() =>
+                          submitRating(s.tmdbId).then(fetchUserRatings)
+                        }
                       >
                         Submit
                       </button>
                     </div>
                   </div>
                 </>
+              )}
+              {/* Own Rating */}
+              {getRating(s.tmdbId) !== null && (
+                <div className={styles.ownRatingTag}>
+                  <span className={styles.starIcon}>★</span>
+                  {getRating(s.tmdbId)?.toFixed(1)}
+                </div>
               )}
             </div>
             <p className={styles.cardTitle}>
