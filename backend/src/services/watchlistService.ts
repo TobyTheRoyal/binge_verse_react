@@ -1,15 +1,18 @@
 
 import { WatchlistModel, WatchlistDocument } from '../models/watchlist';
 import { MoviesService } from './moviesService';
+import { SeriesService } from './seriesService';
 import { ContentService, Content } from './contentService';
 
 export type WatchlistItem = Content & { rating?: number };
 
 export class WatchlistService {
    private moviesService: MoviesService;
+   private seriesService: SeriesService;
 
   constructor(contentService: ContentService) {
     this.moviesService = new MoviesService(contentService);
+    this.seriesService = new SeriesService(contentService);
   }
 
   async addToWatchlist(
@@ -30,7 +33,10 @@ export class WatchlistService {
     const items = await Promise.all(
       docs.map(
         async (doc): Promise<WatchlistItem | null> => {
-          const content = await this.moviesService.findByTmdbId(doc.tmdbId);
+          const content =
+            doc.type === 'movie'
+              ? await this.moviesService.findByTmdbId(doc.tmdbId)
+              : await this.seriesService.findByTmdbId(doc.tmdbId);
           return content
             ? { ...content, ...(doc.rating != null && { rating: doc.rating }) }
             : null;
