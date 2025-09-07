@@ -10,6 +10,7 @@ interface RatedContent {
   releaseYear?: number;
   imdbRating?: number;
   rtRating?: number;
+  type?: 'movie' | 'tv';
   genres?: string;
   providers?: string;
   rating: number;
@@ -120,9 +121,10 @@ const History: React.FC = () => {
     }
   };
 
-  const onCardClick = (tmdbId: string) => {
+  const onCardClick = (entry: RatedContent) => {
     if (selectedContentId) return; // rating open → block navigation
-    navigate(`/movies/${tmdbId}`);
+    const path = entry.type === 'tv' ? `/series/${entry.tmdbId}` : `/movies/${entry.tmdbId}`;
+    navigate(path);
   };
 
   const toggleFilters = () => setShowFilters((s) => !s);
@@ -137,16 +139,16 @@ const History: React.FC = () => {
     filters.providers.length > 0;
 
   return (
-    <div className="history-container">
-      <div className="history-header-row">
+    <div className="historyContainer">
+      <div className="historyHeaderRow">
         <h2>My History</h2>
-        <div className="filter-actions">
+        <div className="filterActions">
           <button
-            className={`filter-toggle-btn ${showFilters ? "active" : ""}`}
+            className={`filterToggleBtn ${showFilters ? "active" : ""}`}
             onClick={toggleFilters}
           >
             <svg
-              className="filter-icon"
+              className="filterIcon"
               width="16"
               height="16"
               viewBox="0 0 24 24"
@@ -157,7 +159,7 @@ const History: React.FC = () => {
               <polygon points="22 3 2 3 10 12.5 10 21 14 21 14 12.5 22 3"></polygon>
             </svg>
             Filter
-            {hasActiveFilters() && <span className="active-indicator"></span>}
+            {hasActiveFilters() && <span className="activeIndicator"></span>}
           </button>
         </div>
       </div>
@@ -189,22 +191,22 @@ const History: React.FC = () => {
         />
       )}
 
-      <div className="content-list">
+      <div className="contentList">
         {filteredHistory.map((entry) => (
           <div
             key={entry.tmdbId}
-            className="content-card"
+            className="contentCard"
             onMouseLeave={stopRating}
-            onClick={() => onCardClick(entry.tmdbId)}
+            onClick={() => onCardClick(entry)}
           >
             <div
-              className="card-image"
+              className="cardImage"
               style={{
                 backgroundImage: `url(${entry.poster || "https://placehold.co/200x300"})`,
               }}
             >
               <button
-                className="rating-btn"
+                className="ratingBtn"
                 onClick={(e) => {
                   e.stopPropagation();
                   startRating(entry.tmdbId);
@@ -217,10 +219,10 @@ const History: React.FC = () => {
 
               {selectedContentId === entry.tmdbId && !isRatingSubmitted && (
                 <>
-                  <div className="rating-overlay"></div>
-                  <div className="rating-input-container">
-                    <div className="rating-card">
-                      <button className="close-btn" onClick={stopRating}>
+                  <div className="ratingOverlay"></div>
+                  <div className="ratingInputContainer">
+                    <div className="ratingCard">
+                      <button className="closeBtn" onClick={stopRating}>
                         ✕
                       </button>
                       <h3>Rate “{entry.title}”</h3>
@@ -229,13 +231,13 @@ const History: React.FC = () => {
                         value={ratingScore}
                         onChange={(e) => setRatingScore(e.target.value)}
                         placeholder="0.0 – 10.0"
-                        className="rating-input-field"
+                        className="ratingInputField"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") submitRating(entry.tmdbId);
                         }}
                       />
                       <button
-                        className="submit-rating-btn"
+                        className="submitRatingBtn"
                         onClick={() => submitRating(entry.tmdbId)}
                       >
                         Submit
@@ -246,33 +248,33 @@ const History: React.FC = () => {
               )}
 
               {entry.rating != null && (
-                <div className="own-rating-tag">
-                  <span className="star-icon">★</span>
+                <div className="ownRatingTag">
+                  <span className="starIcon">★</span>
                   {entry.rating.toFixed(1)}
                 </div>
               )}
             </div>
 
-            <p className="card-title">
+            <p className="cardTitle">
               {entry.title} ({entry.releaseYear})
             </p>
 
-            <div className="ratings-container">
-              <div className="imdb-rating">
+            <div className="ratingsContainer">
+              <div className="imdbRating">
                 <img
                   src="/assets/images/imdb-logo.png"
                   alt="IMDb"
-                  className="rating-icon imdb-rating-icon"
+                  className="ratingIcon imdbRatingIcon"
                 />
                 {entry.imdbRating != null
                   ? entry.imdbRating.toFixed(1)
                   : "N/A"}
               </div>
-              <div className="rt-rating">
+              <div className="rtRating">
                 <img
                   src="/assets/images/rt-logo-cf.png"
                   alt="Rotten Tomatoes"
-                  className="rating-icon rt-rating-icon"
+                  className="ratingIcon rtRatingIcon"
                 />
                 {entry.rtRating != null
                   ? `${entry.rtRating.toFixed(0)}%`

@@ -23,7 +23,7 @@ export const createRatingsRouter = (
 
   router.get('/', async (req, res) => {
     const user = (req as any).user;
-    const list = await ratingsService.getUserRatings(user.id);
+    const list = await ratingsService.getUserRatedContent(user.id);
     res.json(list);
   });
 

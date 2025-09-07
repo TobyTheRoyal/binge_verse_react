@@ -1,14 +1,14 @@
 @use '../../styles/variables';
-@use '../../styles/content-card';
+@use '../../styles/content-card' as *;
 
-.history-container {
+.historyContainer {
   background: variables.$primary-color;
   padding: variables.$spacing-xl;
   min-height: 100vh;
   color: variables.$text-color;
   font-family: variables.$font-family;
 }
-.history-header-row {
+.historyHeaderRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -25,13 +25,13 @@ h2 {
   text-shadow: 0 0 10px variables.$shadow-color;
 }
 
-.filter-actions {
+.filterActions {
   display: flex;
   justify-content: flex-end;
   margin: 0;
 }
 
-.filter-toggle-btn {
+.filterToggleBtn {
   background: linear-gradient(135deg, variables.$secondary-color, darken(variables.$secondary-color, 10%));
   border: 2px solid variables.$accent-color;
   color: variables.$text-color;
@@ -55,11 +55,11 @@ h2 {
     color: variables.$text-color;
   }
 
-  .filter-icon {
+  .filterIcon {
     stroke: currentColor;
   }
 
-  .active-indicator {
+  .activeIndicator {
     width: 0.5rem;
     height: 0.5rem;
     background-color: #22c55e;
@@ -69,7 +69,7 @@ h2 {
 }
 
 
-.content-list {
+.contentList {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: variables.$spacing-lg;
@@ -82,7 +82,7 @@ h2 {
 
 
 @media (max-width: 768px) {
-  .history-container {
+  .historyContainer {
     padding: variables.$spacing-md;
   }
 
@@ -90,22 +90,22 @@ h2 {
     font-size: variables.$font-size-subheading;
   }
 
-  .content-list {
+  .contentList {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: variables.$spacing-md;
   }
 
-  .content-card {
+  .contentCard {
     height: 320px;
 
-    .card-title {
+    .cardTitle {
       font-size: variables.$font-size-small;
     }
 
-    .ratings-container {
+    .ratingsContainer {
       font-size: 0.75rem;
 
-      .rating-icon {
+      .ratingIcon {
         width: 14px;
         height: 14px;
       }

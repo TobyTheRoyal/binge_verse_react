@@ -1,4 +1,5 @@
 import { RatingModel, RatingDocument } from '../models/rating';
+import { ContentService, Content } from './contentService';
 
   export class RatingsService {
   async setRating(userId: string, tmdbId: string, rating: number): Promise<RatingDocument> {
@@ -18,5 +19,24 @@ import { RatingModel, RatingDocument } from '../models/rating';
   async getUserRatings(userId: string): Promise<RatingDocument[]> {
     const docs = await RatingModel.find({ userId }).exec();
     return docs;
+  }
+   async getUserRatedContent(
+    userId: string
+  ): Promise<(Content & { rating: number })[]> {
+    const docs = await RatingModel.find({ userId }).exec();
+    const contentService = new ContentService();
+    const results: (Content & { rating: number })[] = [];
+
+    for (const doc of docs) {
+      let content = await contentService.getContentDetails(doc.tmdbId, 'movie');
+      if (!content) {
+        content = await contentService.getContentDetails(doc.tmdbId, 'tv');
+      }
+      if (content) {
+        results.push({ ...content, rating: doc.rating });
+      }
+    }
+
+    return results;
   }
 }
