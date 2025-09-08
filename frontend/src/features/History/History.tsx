@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
 import FilterControls from "../FilterControls/FilterControls";
+import styles from "./History.module.scss";
 
 interface RatedContent {
   tmdbId: string;
@@ -95,7 +96,7 @@ const History: React.FC = () => {
     setRatingScore("");
     setIsRatingSubmitted(false);
     setTimeout(() => {
-      const input = document.querySelector(".rating-input-field") as HTMLElement;
+      const input = document.querySelector(`.${styles.ratingInputField}`) as HTMLElement;
       if (input) input.focus();
     }, 0);
   };
@@ -139,16 +140,16 @@ const History: React.FC = () => {
     filters.providers.length > 0;
 
   return (
-    <div className="historyContainer">
-      <div className="historyHeaderRow">
+    <div className={styles.historyContainer}>
+      <div className={styles.historyHeaderRow}>
         <h2>My History</h2>
-        <div className="filterActions">
+        <div className={styles.filterActions}>
           <button
-            className={`filterToggleBtn ${showFilters ? "active" : ""}`}
+            className={`${styles.filterToggleBtn} ${showFilters ? styles.active : ""}`}
             onClick={toggleFilters}
           >
             <svg
-              className="filterIcon"
+              className={styles.filterIcon}
               width="16"
               height="16"
               viewBox="0 0 24 24"
@@ -159,7 +160,7 @@ const History: React.FC = () => {
               <polygon points="22 3 2 3 10 12.5 10 21 14 21 14 12.5 22 3"></polygon>
             </svg>
             Filter
-            {hasActiveFilters() && <span className="activeIndicator"></span>}
+            {hasActiveFilters() && <span className={styles.activeIndicator}></span>}
           </button>
         </div>
       </div>
@@ -191,22 +192,22 @@ const History: React.FC = () => {
         />
       )}
 
-      <div className="contentList">
+      <div className={styles.contentList}>
         {filteredHistory.map((entry) => (
           <div
             key={entry.tmdbId}
-            className="contentCard"
+            className={styles.contentCard}
             onMouseLeave={stopRating}
             onClick={() => onCardClick(entry)}
           >
             <div
-              className="cardImage"
+              className={styles.cardImage}
               style={{
                 backgroundImage: `url(${entry.poster || "https://placehold.co/200x300"})`,
               }}
             >
               <button
-                className="ratingBtn"
+                className={styles.ratingBtn}
                 onClick={(e) => {
                   e.stopPropagation();
                   startRating(entry.tmdbId);
@@ -219,10 +220,10 @@ const History: React.FC = () => {
 
               {selectedContentId === entry.tmdbId && !isRatingSubmitted && (
                 <>
-                  <div className="ratingOverlay"></div>
-                  <div className="ratingInputContainer">
-                    <div className="ratingCard">
-                      <button className="closeBtn" onClick={stopRating}>
+                  <div className={styles.ratingOverlay}></div>
+                  <div className={styles.ratingInputContainer}>
+                    <div className={styles.ratingCard}>
+                      <button className={styles.closeBtn} onClick={stopRating}>
                         ✕
                       </button>
                       <h3>Rate “{entry.title}”</h3>
@@ -231,7 +232,7 @@ const History: React.FC = () => {
                         value={ratingScore}
                         onChange={(e) => setRatingScore(e.target.value)}
                         placeholder="0.0 – 10.0"
-                        className="ratingInputField"
+                        className={styles.ratingInputField}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") submitRating(entry.tmdbId);
                         }}
@@ -248,33 +249,33 @@ const History: React.FC = () => {
               )}
 
               {entry.rating != null && (
-                <div className="ownRatingTag">
-                  <span className="starIcon">★</span>
+                <div className={styles.ownRatingTag}>
+                  <span className={styles.starIcon}>★</span>
                   {entry.rating.toFixed(1)}
                 </div>
               )}
             </div>
 
-            <p className="cardTitle">
+            <p className={styles.cardTitle}>
               {entry.title} ({entry.releaseYear})
             </p>
 
-            <div className="ratingsContainer">
-              <div className="imdbRating">
+            <div className={styles.ratingsContainer}>
+              <div className={styles.imdbRating}>
                 <img
                   src="/assets/images/imdb-logo.png"
                   alt="IMDb"
-                  className="ratingIcon imdbRatingIcon"
+                  className={`${styles.ratingIcon} ${styles.imdbRatingIcon}`}
                 />
                 {entry.imdbRating != null
                   ? entry.imdbRating.toFixed(1)
                   : "N/A"}
               </div>
-              <div className="rtRating">
+              <div className={styles.rtRating}>
                 <img
                   src="/assets/images/rt-logo-cf.png"
                   alt="Rotten Tomatoes"
-                  className="ratingIcon rtRatingIcon"
+                  className={`${styles.ratingIcon} ${styles.rtRatingIcon}`}
                 />
                 {entry.rtRating != null
                   ? `${entry.rtRating.toFixed(0)}%`
