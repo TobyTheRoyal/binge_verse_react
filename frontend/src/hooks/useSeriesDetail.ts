@@ -46,7 +46,7 @@ export function useSeriesDetail(id?: string) {
     try {
       // 1. Serie laden
       const { data } = await axiosClient.get<SeriesDetail>(
-        `/api/series/${id}`
+        `/series/${id}`
       );
       setSeries(data);
 

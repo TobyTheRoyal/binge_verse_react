@@ -12,7 +12,7 @@ html, body {
 }
 
 @mixin layout($prefix) {
-  .#{$prefix}-detail-container {
+  .#{$prefix}DetailContainer {
     width: 100vw;
     max-width: none;
     overflow-x: hidden;
@@ -25,7 +25,7 @@ html, body {
     font-family: variables.$font-family;
   }
 
-  .#{$prefix}-header {
+  .#{$prefix}Header {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -34,26 +34,26 @@ html, body {
     margin-bottom: variables.$spacing-xl;
   }
 
-  .#{$prefix}-title {
+  .#{$prefix}Title {
     font-size: 2.5rem;
     font-weight: 700;
     color: variables.$text-color;
   }
 
-  .#{$prefix}-year {
+  .#{$prefix}Year {
     font-size: 1.5rem;
     font-weight: 400;
     color: variables.$secondary-text-color;
     margin-left: variables.$spacing-sm;
   }
 
-  .#{$prefix}-content {
+  .#{$prefix}Content {
     display: flex;
     flex-wrap: wrap;
     gap: variables.$spacing-xl;
   }
 
-  .#{$prefix}-poster {
+  .#{$prefix}Poster {
     width: 100%;
     border-radius: variables.$border-radius-sm;
     box-shadow: variables.$shadow-md;
@@ -61,7 +61,7 @@ html, body {
   }
 }
 
-.poster-wrapper {
+.posterWrapper {
   position: relative;
   flex: 0 0 300px;
   width: 300px;
@@ -75,8 +75,8 @@ html, body {
   justify-content: center;
 }
 
-.add-btn,
-.rating-btn {
+.addBtn,
+.ratingBtn {
   position: absolute;
   width: 32px;
   height: 32px;
@@ -98,10 +98,10 @@ html, body {
   }
 }
 
-.add-btn { top: 12px; left: 12px; }
-.rating-btn { top: 56px; left: 12px; }
+.addBtn { top: 12px; left: 12px; }
+.ratingBtn { top: 56px; left: 12px; }
 
-.rating-overlay {
+.ratingOverlay {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.7);
@@ -110,7 +110,7 @@ html, body {
   z-index: 1;
 }
 
-.rating-input-container {
+.ratingInputContainer {
   position: absolute;
   top: 0;
   left: 0;
@@ -124,7 +124,7 @@ html, body {
   max-height: 450px;
 }
 
-.rating-card {
+.ratingCard {
   background: rgba(42, 42, 42, 0.9);
   padding: variables.$spacing-sm;
   border-radius: variables.$border-radius-sm;
@@ -135,7 +135,7 @@ html, body {
   max-width: 240px;
   box-shadow: variables.$shadow-md;
 
-  .close-btn {
+  .closeBtn {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -159,7 +159,7 @@ html, body {
     text-align: center;
   }
 
-  .rating-input-field {
+  .ratingInputField {
     width: 100px;
     padding: variables.$spacing-sm;
     border: 2px solid variables.$accent-color;
@@ -178,7 +178,7 @@ html, body {
     }
   }
 
-  .submit-rating-btn {
+  .submitRatingBtn {
     background: linear-gradient(135deg, variables.$accent-color, darken(variables.$accent-color, 15%));
     color: variables.$text-color;
     border: none;
@@ -201,19 +201,19 @@ html, body {
   }
 
 
-.details-wrapper {
+.detailsWrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: variables.$spacing-lg;
 }
 
-.ratings-wrapper {
+.ratingsWrapper {
   display: flex;
   gap: variables.$spacing-md;
 }
 
-.rating-block {
+.ratingBlock {
   display: flex;
   align-items: center;
   gap: variables.$spacing-sm;
@@ -223,12 +223,12 @@ html, body {
   box-shadow: variables.$shadow-sm;
 }
 
-.own-rating-tag {
-  @extend .rating-block;
+.ownRatingTag {
+  @extend .ratingBlock;
   font-size: 1.25rem;
   font-weight: 600;
   gap: variables.$spacing-xs;
-  .star-icon {
+  .starIcon {
     color: variables.$star-icon-color;
     font-size: 1.3em;
     margin-right: variables.$spacing-xs;
@@ -236,15 +236,15 @@ html, body {
   }
 }
 
-.rating-icon {
+.ratingIcon {
   width: 24px;
   height: auto;
 }
 
-.imdb-rating-icon { width: 28px; }
-.rt-rating-icon  { width: 24px; }
+.imdbRatingIcon { width: 28px; }
+.rtRatingIcon  { width: 24px; }
 
-.rating-value {
+.ratingValue {
   font-size: 1.25rem;
   font-weight: 600;
   color: variables.$text-color;
@@ -263,13 +263,13 @@ html, body {
   align-items: center;
 }
 
-.provider-logo {
+.providerLogo {
   width: 60px;
   height: auto;
   object-fit: contain;
 }
 
-.genre-pill {
+.genrePill {
   background: linear-gradient(135deg, variables.$secondary-color, darken(variables.$secondary-color, 15%));
   color: variables.$text-color;
   padding: variables.$spacing-xs variables.$spacing-sm;
@@ -279,7 +279,7 @@ html, body {
 }
 
 .overview,
-.cast-section {
+.castSection {
   background: linear-gradient(135deg, variables.$secondary-color, darken(variables.$secondary-color, 15%));
   padding: variables.$spacing-lg;
   border-radius: variables.$border-radius-md;
@@ -292,31 +292,31 @@ html, body {
   overflow-x: hidden;
 }
 
-.cast-list {
+.castList {
   display: flex;
   overflow-x: auto;
   gap: variables.$spacing-md;
 }
 
-.cast-item {
+.castItem {
   flex: 0 0 120px;
   text-align: center;
 }
 
-.cast-image-wrapper {
+.castImageWrapper {
   width: 100%;
   height: 180px;
   overflow: hidden;
   border-radius: variables.$border-radius-md;
 }
 
-.cast-image-wrapper img {
+.castImageWrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.cast-info {
+.castInfo {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -324,18 +324,18 @@ html, body {
   gap: variables.$spacing-xs;
 }
 
-.cast-name {
+.castName {
   margin: 0;
   font-weight: 600;
   color: variables.$text-color;
 }
 
-.cast-char {
+.castChar {
   margin: 0;
   color: variables.$text-color;
 }
 
 @media (max-width: 768px) {
-  .poster-wrapper { flex: 0 0 240px; }
-  .rating-card { width: 90%; max-width: 220px; }
+  .posterWrapper { flex: 0 0 240px; }
+  .ratingCard { width: 90%; max-width: 220px; }
 }

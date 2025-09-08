@@ -41,7 +41,7 @@ export function useMovieDetail(id?: string) {
     try {
       // 1. Movie Details
       const { data } = await axiosClient.get<MovieDetail>(
-        `/api/movies/${id}`
+        `/movies/${id}`
       );
       setMovie(data);
 
