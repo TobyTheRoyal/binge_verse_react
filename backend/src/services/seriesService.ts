@@ -12,13 +12,11 @@ export class SeriesService {
       const found = list.find(c => c.tmdbId === tmdbId);
       if (found) return found;
     }
-    return undefined;
+    const content = await this.contentService.getContentDetails(tmdbId, 'tv');
+    return content ?? undefined;
   }
 
-  async listSeries(page: number, _filters: any): Promise<Content[]> {
-    const all = await this.contentService.getTrendingSeries();
-    const pageSize = 20;
-    const start = (page - 1) * pageSize;
-    return all.slice(start, start + pageSize);
+  async listTrendingSeries(page: number, _filters: any): Promise<Content[]> {
+    return this.contentService.fetchTrendingSeries(page);
   }
 }

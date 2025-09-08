@@ -14,7 +14,7 @@ export const createSeriesRouter = (seriesService: SeriesService) => {
         // ignore parse errors
       }
     }
-    const series = await seriesService.listSeries(page, filters);
+    const series = await seriesService.listTrendingSeries(page, filters);
     res.json(series);
   });
 

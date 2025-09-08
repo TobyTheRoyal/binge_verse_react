@@ -16,6 +16,8 @@ export class ContentService {
   private cacheTrendingSeries: Content[] = [];
   private cacheTopRatedSeries: Content[] = [];
   private updatingHome = false;
+  private trendingMoviesPageCache = new Map<number, Content[]>();
+  private trendingSeriesPageCache = new Map<number, Content[]>();
 
   async updateHomeCaches() {
     if (this.updatingHome) return;
@@ -193,6 +195,64 @@ export class ContentService {
       await this.updateHomeCaches();
     }
     return this.cacheTopRatedSeries;
+  }
+
+  async fetchTrendingMovies(page: number): Promise<Content[]> {
+    if (this.trendingMoviesPageCache.has(page)) {
+      return this.trendingMoviesPageCache.get(page)!;
+    }
+    const url = `https://api.themoviedb.org/3/trending/movie/week?page=${page}&api_key=${process.env.TMDB_API_KEY}`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.status_message || 'TMDB request failed');
+      }
+      const items: Content[] = (data.results || []).map((r: any) => ({
+        id: r.id,
+        tmdbId: String(r.id),
+        title: r.title || '',
+        releaseYear: r.release_date ? parseInt(r.release_date.slice(0, 4), 10) : 0,
+        poster: r.poster_path
+          ? `https://image.tmdb.org/t/p/w500${r.poster_path}`
+          : '',
+        type: 'movie',
+      }));
+      this.trendingMoviesPageCache.set(page, items);
+      return items;
+    } catch (err) {
+      console.error(`Failed to fetch trending movies page ${page}`, err);
+      return [];
+    }
+  }
+
+  async fetchTrendingSeries(page: number): Promise<Content[]> {
+    if (this.trendingSeriesPageCache.has(page)) {
+      return this.trendingSeriesPageCache.get(page)!;
+    }
+    const url = `https://api.themoviedb.org/3/trending/tv/week?page=${page}&api_key=${process.env.TMDB_API_KEY}`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.status_message || 'TMDB request failed');
+      }
+      const items: Content[] = (data.results || []).map((r: any) => ({
+        id: r.id,
+        tmdbId: String(r.id),
+        title: r.name || '',
+        releaseYear: r.first_air_date ? parseInt(r.first_air_date.slice(0, 4), 10) : 0,
+        poster: r.poster_path
+          ? `https://image.tmdb.org/t/p/w500${r.poster_path}`
+          : '',
+        type: 'tv',
+      }));
+      this.trendingSeriesPageCache.set(page, items);
+      return items;
+    } catch (err) {
+      console.error(`Failed to fetch trending series page ${page}`, err);
+      return [];
+    }
   }
 
   async searchTmdb(query: string): Promise<Content[]> {

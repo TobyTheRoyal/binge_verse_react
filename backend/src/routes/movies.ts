@@ -14,10 +14,10 @@ export const createMoviesRouter = (moviesService: MoviesService) => {
         // ignore parse errors
       }
     }
-    const movies = await moviesService.listMovies(page, filters);
+    const movies = await moviesService.listTrendingMovies(page, filters);
     res.json(movies);
   });
-  
+
   router.get(
     '/:tmdbId',
     async (req: Request, res: Response): Promise<void> => {
