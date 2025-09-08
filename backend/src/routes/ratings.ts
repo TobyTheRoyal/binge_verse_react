@@ -12,12 +12,16 @@ export const createRatingsRouter = (
 
   router.post('/', async (req, res): Promise<void> => {
     const user = (req as any).user;
-    const { tmdbId, rating } = req.body;
+    const { tmdbId, rating, contentType } = req.body;
     if (typeof rating !== 'number' || rating < 0 || rating > 10) {
       res.status(400).json({ message: 'Rating must be between 0 and 10' });
       return;
     }
-    await ratingsService.setRating(user.id, tmdbId, rating);
+    if (contentType !== 'movie' && contentType !== 'tv') {
+      res.status(400).json({ message: 'contentType must be "movie" or "tv"' });
+      return;
+    }
+    await ratingsService.setRating(user.id, tmdbId, rating, contentType);
     res.status(204).end();
   });
 

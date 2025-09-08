@@ -80,7 +80,11 @@ export function useSeries(filters?: FilterOptions) {
       return;
     }
     try {
-      await axiosClient.post('/ratings', { tmdbId, rating: score });
+      await axiosClient.post('/ratings', {
+        tmdbId,
+        rating: score,
+        contentType: 'tv',
+      });
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);
     } catch (err) {

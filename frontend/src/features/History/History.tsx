@@ -113,7 +113,13 @@ const History: React.FC = () => {
       return;
     }
     try {
-      await axiosClient.post("/ratings", { tmdbId, rating: score });
+      const content = history.find((h) => h.tmdbId === tmdbId);
+      if (!content?.type) return;
+      await axiosClient.post("/ratings", {
+        tmdbId,
+        rating: score,
+        contentType: content.type,
+      });
       setIsRatingSubmitted(true);
       await loadHistory();
       setTimeout(stopRating, 500);

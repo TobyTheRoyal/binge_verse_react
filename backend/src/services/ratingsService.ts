@@ -2,10 +2,15 @@ import { RatingModel, RatingDocument } from '../models/rating';
 import { ContentService, Content } from './contentService';
 
   export class RatingsService {
-  async setRating(userId: string, tmdbId: string, rating: number): Promise<RatingDocument> {
+  async setRating(
+    userId: string,
+    tmdbId: string,
+    rating: number,
+    contentType: 'movie' | 'tv'
+  ): Promise<RatingDocument> {
     const doc = await RatingModel.findOneAndUpdate(
       { userId, tmdbId },
-      { rating },
+      { rating, contentType },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     ).exec();
     return doc;
@@ -28,10 +33,10 @@ import { ContentService, Content } from './contentService';
     const results: (Content & { rating: number })[] = [];
 
     for (const doc of docs) {
-      let content = await contentService.getContentDetails(doc.tmdbId, 'movie');
-      if (!content) {
-        content = await contentService.getContentDetails(doc.tmdbId, 'tv');
-      }
+      const content = await contentService.getContentDetails(
+        doc.tmdbId,
+        doc.contentType as 'movie' | 'tv'
+      );
       if (content) {
         results.push({ ...content, rating: doc.rating });
       }

@@ -140,7 +140,13 @@ export function useWatchlist() {
       return;
     }
     try {
-      await axiosClient.post('/ratings', { tmdbId, rating: score });
+      const content = allContents.find((i) => i.tmdbId === tmdbId);
+      if (!content) return;
+      await axiosClient.post('/ratings', {
+        tmdbId,
+        rating: score,
+        contentType: content.type,
+      });
       setIsRatingSubmitted(true);
       setTimeout(() => stopRating(), 500);
     } catch (err) {

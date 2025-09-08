@@ -93,6 +93,7 @@ export function useMovieDetail(id?: string) {
         await axiosClient.post(`/ratings`, {
           tmdbId: movie.tmdbId,
           rating: score,
+          contentType: 'movie',
         });
         setUserRating(score);
       } catch (err) {

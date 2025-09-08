@@ -38,6 +38,7 @@ const Home: React.FC = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [ratingScore, setRatingScore] = useState('');
   const [isRatingSubmitted, setIsRatingSubmitted] = useState(false);
+  const [selectedContentType, setSelectedContentType] = useState<'movie' | 'tv' | null>(null);
 
   const setLoading = (index: number, value: boolean) => {
     setCategories(prev => {
@@ -156,13 +157,18 @@ const Home: React.FC = () => {
     }
   };
 
-  const startRating = (categoryId: string, contentId: string) => {
+  const startRating = (
+    categoryId: string,
+    contentId: string,
+    contentType: 'movie' | 'tv'
+  ) => {
     if (!loggedIn) {
       navigate('/auth/login');
       return;
     }
     setSelectedCategoryId(categoryId);
     setSelectedContentId(contentId);
+    setSelectedContentType(contentType);
     setRatingScore('');
     setIsRatingSubmitted(false);
     setTimeout(() => ratingInputRef.current?.focus(), 0);
@@ -171,6 +177,7 @@ const Home: React.FC = () => {
   const stopRating = () => {
     setSelectedCategoryId(null);
     setSelectedContentId(null);
+    setSelectedContentType(null);
     setRatingScore('');
     setIsRatingSubmitted(false);
   };
@@ -186,7 +193,8 @@ const Home: React.FC = () => {
       return;
     }
     try {
-      await rateContent(tmdbId, score);
+      if (!selectedContentType) return;
+      await rateContent(tmdbId, selectedContentType, score);
       setIsRatingSubmitted(true);
       await fetchUserRatings();
       setTimeout(() => stopRating(), 500);
@@ -260,7 +268,7 @@ const Home: React.FC = () => {
                           className={styles['ratingBtn']}
                           onClick={e => {
                             e.preventDefault();
-                            startRating(category.id, item.tmdbId);
+                            startRating(category.id, item.tmdbId, item.type);
                           }}
                         >
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">

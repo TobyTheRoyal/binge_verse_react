@@ -110,6 +110,7 @@ export function useSeriesDetail(id?: string) {
        await axiosClient.post('/ratings', {
         tmdbId: series.tmdbId,
         rating: score,
+        contentType: 'tv',
       });
       setIsRatingSubmitted(true);
       setUserRating(score);

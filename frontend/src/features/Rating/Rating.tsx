@@ -35,7 +35,11 @@ const Rating: React.FC = () => {
     const selected = ratings.find((r) => r.id === selectedContentId);
     if (!selected) return;
     try {
-      await rateContent(selected.tmdbId, score);
+      await rateContent(
+        selected.tmdbId,
+        selected.type as 'movie' | 'tv',
+        score
+      );
       closeRatingModal();
       fetchUserRatings();
     } catch (err) {

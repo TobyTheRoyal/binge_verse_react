@@ -4,7 +4,7 @@ import axiosClient from "../api/axiosClient";
 export interface RatingItem {
   id: number;
   tmdbId: string;
-  type: string;
+  type: 'movie' | 'tv';
   title?: string;
   poster?: string;
   rating: number;
@@ -24,13 +24,16 @@ export function useRatings() {
     }
   }, []);
 
-  const rateContent = useCallback(async (tmdbId: string, rating: number) => {
-    try {
-      await axiosClient.post("/ratings", { tmdbId, rating });
-    } catch (err) {
-      console.error("Failed to submit rating", err);
-    }
-  }, []);
+  const rateContent = useCallback(
+    async (tmdbId: string, contentType: 'movie' | 'tv', rating: number) => {
+      try {
+        await axiosClient.post("/ratings", { tmdbId, rating, contentType });
+      } catch (err) {
+        console.error("Failed to submit rating", err);
+      }
+    },
+    []
+  );
 
   const getRating = useCallback(
     (tmdbId: string): number | null => {
