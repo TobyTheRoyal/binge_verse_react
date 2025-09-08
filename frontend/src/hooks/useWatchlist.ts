@@ -44,6 +44,8 @@ export function useWatchlist() {
           return false;
         if (f.rtRatingMin > 0 && (!c.rtRating || c.rtRating < f.rtRatingMin))
           return false;
+        if (f.userRatingMin > 0 && (!c.rating || c.rating < f.userRatingMin))
+          return false;
         return true;
       });
     },
@@ -174,6 +176,7 @@ export function useWatchlist() {
   return {
     allContents,
     filteredContents,
+    filters,
     showFilters,
     toggleFilters: () => setShowFilters((s) => !s),
     hasActiveFilters,

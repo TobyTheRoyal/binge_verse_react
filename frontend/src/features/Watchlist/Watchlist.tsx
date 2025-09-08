@@ -2,13 +2,17 @@ import React, { useEffect } from "react";
 import { useWatchlist } from "../../hooks/useWatchlist";
 import { useRatings } from "../../hooks/useRatings";
 import styles from "./Watchlist.module.scss";
+import FilterControls from "../FilterControls/FilterControls";
 
 const Watchlist: React.FC = () => {
   const {
     filteredContents,
+    filters,
     showFilters,
     toggleFilters,
     hasActiveFilters,
+    updateFilters,
+    resetFilters,
     removeFromWatchlist,
     startRating,
     stopRating,
@@ -53,7 +57,19 @@ const Watchlist: React.FC = () => {
         </div>
       </div>
 
-      {showFilters && <div>{/* TODO: FilterControls component here */}</div>}
+      {showFilters && (
+        <FilterControls
+          genresSelected={filters.genres}
+          releaseYearMin={filters.releaseYearMin}
+          releaseYearMax={filters.releaseYearMax}
+          imdbRatingMin={filters.imdbRatingMin}
+          rtRatingMin={filters.rtRatingMin}
+          userRatingMin={filters.userRatingMin}
+          providersSelected={filters.providers}
+          onFiltersChange={updateFilters}
+          onReset={resetFilters}
+        />
+      )}
 
       <div className={styles.contentList}>
         {filteredContents.map((item) => (
