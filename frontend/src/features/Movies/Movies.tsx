@@ -51,8 +51,8 @@ const Movies: React.FC = () => {
       throttle(() => {
         if (!hasMore || isLoading) return;
         const threshold = 300;
-        const pos = window.innerHeight + window.scrollY;
-        const height = document.body.offsetHeight;
+        const pos = window.innerHeight + document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight;
         if (height - pos < threshold) {
           fetchNextPage();
         }

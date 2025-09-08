@@ -45,8 +45,8 @@ const Series: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + window.scrollY >=
-        document.body.offsetHeight - 300
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.scrollHeight - 300
       ) {
         fetchNextPage();
       }
