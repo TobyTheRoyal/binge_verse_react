@@ -19,6 +19,7 @@ export interface RouteConfig {
 
 const routes: RouteConfig[] = [
   { path: '/', Component: Home },
+  { path: '/for-you', Component: Home },
   { path: '/auth/register', Component: Register },
   { path: '/auth/login', Component: Login },
   { path: '/watchlist', Component: Watchlist, requiresAuth: true },
