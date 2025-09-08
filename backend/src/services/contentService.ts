@@ -7,6 +7,15 @@ export interface Content {
   type: 'movie' | 'tv';
   imdbRating?: number | null;
   rtRating?: number | null;
+  overview?: string;
+  genres?: string[];
+  providers?: string[];
+  cast?: {
+    tmdbId: number;
+    name: string;
+    character: string;
+    profilePathUrl: string;
+  }[];
 }
 
 export class ContentService {
@@ -129,9 +138,7 @@ export class ContentService {
     type: 'movie' | 'tv'
   ): Promise<Content | null> {
     const apiKey = process.env.TMDB_API_KEY;
-    const url = `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${apiKey}${
-      type === 'tv' ? '&append_to_response=external_ids' : ''
-    }`;
+    const url = `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${apiKey}&append_to_response=external_ids,credits,watch/providers`;
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -150,7 +157,35 @@ export class ContentService {
           ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
           : '',
         type,
+        overview: data.overview || '',
+        genres: Array.isArray(data.genres)
+          ? data.genres.map((g: any) => g.name)
+          : undefined,
       };
+      const providerData = data['watch/providers']?.results?.DE;
+      if (providerData) {
+        const mapProviders = (arr: any[]) => arr.map((p: any) => p.provider_name);
+        const providersSet = new Set<string>();
+        ['flatrate', 'rent', 'buy', 'ads'].forEach(key => {
+          if (Array.isArray(providerData[key])) {
+            mapProviders(providerData[key]).forEach(name => providersSet.add(name));
+          }
+        });
+        if (providersSet.size > 0) {
+          content.providers = Array.from(providersSet);
+        }
+      }
+
+      if (data.credits?.cast && Array.isArray(data.credits.cast)) {
+        content.cast = data.credits.cast.slice(0, 10).map((c: any) => ({
+          tmdbId: c.id,
+          name: c.name,
+          character: c.character,
+          profilePathUrl: c.profile_path
+            ? `https://image.tmdb.org/t/p/w500${c.profile_path}`
+            : '',
+        }));
+      }
       const imdbId = data.imdb_id || data.external_ids?.imdb_id;
       let omdb: { imdbRating: number | null; rtRating: number | null } | null = null;
       if (imdbId) {

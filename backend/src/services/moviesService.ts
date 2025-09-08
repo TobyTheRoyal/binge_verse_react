@@ -9,12 +9,21 @@ export class MoviesService {
       await this.contentService.getTopRated(),
       await this.contentService.getNewReleases(),
     ];
+    let cached: Content | undefined;
     for (const list of lists) {
       const found = list.find(c => c.tmdbId === tmdbId);
-      if (found) return found;
+      if (found) {
+        cached = found;
+        break;
+      }
     }
-    const content = await this.contentService.getContentDetails(tmdbId, 'movie');
-    return content ?? undefined;
+    const details = await this.contentService.getContentDetails(tmdbId, 'movie');
+
+    if (details && cached) {
+      return { ...cached, ...details };
+    }
+
+    return details ?? cached;
   }
   async listTrendingMovies(page: number, _filters: any): Promise<Content[]> {
     return this.contentService.fetchTrendingMovies(page);

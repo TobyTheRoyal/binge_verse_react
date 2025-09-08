@@ -8,12 +8,21 @@ export class SeriesService {
       await this.contentService.getTrendingSeries(),
       await this.contentService.getTopRatedSeries(),
     ];
+    let cached: Content | undefined;
     for (const list of lists) {
       const found = list.find(c => c.tmdbId === tmdbId);
-      if (found) return found;
+      if (found) {
+        cached = found;
+        break;
+      }
     }
-    const content = await this.contentService.getContentDetails(tmdbId, 'tv');
-    return content ?? undefined;
+    const details = await this.contentService.getContentDetails(tmdbId, 'tv');
+
+    if (details && cached) {
+      return { ...cached, ...details };
+    }
+
+    return details ?? cached;
   }
 
   async listTrendingSeries(page: number, _filters: any): Promise<Content[]> {
