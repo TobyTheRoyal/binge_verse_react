@@ -10,7 +10,7 @@ export interface FilterOptions {
   userRatingMin: number;
 }
 
-const defaultFilters: FilterOptions = {
+export const defaultFilters: FilterOptions = {
   genres: [],
   releaseYearMin: 1900,
   releaseYearMax: new Date().getFullYear(),

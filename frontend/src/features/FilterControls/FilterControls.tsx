@@ -1,9 +1,18 @@
 // src/components/FilterControls/FilterControls.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef} from "react";
 import styles from "./FilterControls.module.scss";
 import { PROVIDERS, providerLogoMap } from "../../constants/providers";
 import { getGenres } from "../../api/contentApi";
 import { useDebounce } from "../../hooks/useDebounce";
+import { defaultFilters } from "../../hooks/useFilters";
+
+const {
+  releaseYearMin: DEFAULT_RELEASE_YEAR_MIN,
+  releaseYearMax: DEFAULT_RELEASE_YEAR_MAX,
+  imdbRatingMin: DEFAULT_IMDB_RATING_MIN,
+  rtRatingMin: DEFAULT_RT_RATING_MIN,
+  userRatingMin: DEFAULT_USER_RATING_MIN,
+} = defaultFilters;
 
 interface FilterOptions {
   genres: string[];
@@ -41,6 +50,8 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   onReset,
 }) => {
   const [genres, setGenres] = useState<string[]>([]);
+
+  const isResetting = useRef(false);
 
   const [releaseYearMinValue, setReleaseYearMinValue] = useState(
     releaseYearMin
@@ -94,30 +105,50 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   }, [userRatingMin]);
 
   useEffect(() => {
+    if (isResetting.current) {
+      isResetting.current = false;
+      return;
+    }
     if (debouncedReleaseYearMin !== releaseYearMin) {
       onFiltersChange?.({ releaseYearMin: debouncedReleaseYearMin });
     }
   }, [debouncedReleaseYearMin, releaseYearMin, onFiltersChange]);
 
   useEffect(() => {
+    if (isResetting.current) {
+      isResetting.current = false;
+      return;
+    }
     if (debouncedReleaseYearMax !== releaseYearMax) {
       onFiltersChange?.({ releaseYearMax: debouncedReleaseYearMax });
     }
   }, [debouncedReleaseYearMax, releaseYearMax, onFiltersChange]);
 
   useEffect(() => {
+    if (isResetting.current) {
+      isResetting.current = false;
+      return;
+    }
     if (debouncedImdbRatingMin !== imdbRatingMin) {
       onFiltersChange?.({ imdbRatingMin: debouncedImdbRatingMin });
     }
   }, [debouncedImdbRatingMin, imdbRatingMin, onFiltersChange]);
 
   useEffect(() => {
+    if (isResetting.current) {
+      isResetting.current = false;
+      return;
+    }
     if (debouncedRtRatingMin !== rtRatingMin) {
       onFiltersChange?.({ rtRatingMin: debouncedRtRatingMin });
     }
   }, [debouncedRtRatingMin, rtRatingMin, onFiltersChange]);
 
   useEffect(() => {
+    if (isResetting.current) {
+      isResetting.current = false;
+      return;
+    }
     if (debouncedUserRatingMin !== userRatingMin) {
       onFiltersChange?.({ userRatingMin: debouncedUserRatingMin });
     }
@@ -148,7 +179,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       onFiltersChange?.({ providers: [] });
     }
   };
-  
+
   const getProviderLogoPath = (provider: string) =>
     `/assets/images/providers/${providerLogoMap[provider]}`;
 
@@ -300,6 +331,12 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       <button
         className={styles.resetBtn}
         onClick={() => {
+          isResetting.current = true;
+          setReleaseYearMinValue(DEFAULT_RELEASE_YEAR_MIN);
+          setReleaseYearMaxValue(DEFAULT_RELEASE_YEAR_MAX);
+          setImdbRatingMinValue(DEFAULT_IMDB_RATING_MIN);
+          setRtRatingMinValue(DEFAULT_RT_RATING_MIN);
+          setUserRatingMinValue(DEFAULT_USER_RATING_MIN);
           onReset?.();
         }}
       >
