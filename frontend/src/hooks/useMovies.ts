@@ -88,8 +88,29 @@ export function useMovies() {
   }, [page, isLoading, hasMore, fetchMovies]);
 
   // Filters
-  const updateFilters = (newF: Partial<FilterOptions>) =>
-    setFilters((prev) => ({ ...prev, ...newF }));
+  const updateFilters = <K extends keyof FilterOptions>(
+    updates: Partial<Pick<FilterOptions, K>>
+  ) =>
+    setFilters((prev) => {
+      let changed = false;
+      const updated: FilterOptions = { ...prev };
+      (Object.keys(updates) as K[]).forEach((key) => {
+        const newVal = updates[key]! as FilterOptions[K];
+        const prevVal = prev[key];
+        if (Array.isArray(newVal) && Array.isArray(prevVal)) {
+          if (
+            newVal.length !== prevVal.length ||
+            newVal.some((v, i) => v !== prevVal[i])
+          ) {
+            changed = true;
+          }
+        } else if (newVal !== prevVal) {
+          changed = true;
+        }
+        updated[key] = newVal as FilterOptions[K];
+      });
+      return changed ? updated : prev;
+    });
 
   const resetFilters = () =>
     setFilters({

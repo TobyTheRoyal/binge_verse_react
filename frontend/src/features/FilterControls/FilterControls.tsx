@@ -54,28 +54,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     loadGenres();
   }, []);
 
-  // Synchronisation: entspricht Angular ngOnChanges → emitChange()
-  useEffect(() => {
-    onFiltersChange?.({
-      genres: genresSelected,
-      releaseYearMin,
-      releaseYearMax,
-      imdbRatingMin,
-      rtRatingMin,
-      userRatingMin,
-      providers: providersSelected,
-    });
-  }, [
-    genresSelected,
-    releaseYearMin,
-    releaseYearMax,
-    imdbRatingMin,
-    rtRatingMin,
-    userRatingMin,
-    providersSelected,
-    onFiltersChange,
-  ]);
-
   const toggleGenre = (genre: string) => {
     const updated = genresSelected.includes(genre)
       ? genresSelected.filter((g) => g !== genre)
@@ -83,7 +61,11 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     onFiltersChange?.({ genres: updated });
   };
 
-  const clearGenres = () => onFiltersChange?.({ genres: [] });
+  const clearGenres = () => {
+    if (genresSelected.length > 0) {
+      onFiltersChange?.({ genres: [] });
+    }
+  };
 
   const toggleProvider = (provider: string) => {
     const updated = providersSelected.includes(provider)
@@ -92,7 +74,41 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     onFiltersChange?.({ providers: updated });
   };
 
-  const clearProviders = () => onFiltersChange?.({ providers: [] });
+  const clearProviders = () => {
+    if (providersSelected.length > 0) {
+      onFiltersChange?.({ providers: [] });
+    }
+  };
+
+  const handleReleaseYearMinChange = (value: number) => {
+    if (value !== releaseYearMin) {
+      onFiltersChange?.({ releaseYearMin: value });
+    }
+  };
+
+  const handleReleaseYearMaxChange = (value: number) => {
+    if (value !== releaseYearMax) {
+      onFiltersChange?.({ releaseYearMax: value });
+    }
+  };
+
+  const handleImdbRatingMinChange = (value: number) => {
+    if (value !== imdbRatingMin) {
+      onFiltersChange?.({ imdbRatingMin: value });
+    }
+  };
+
+  const handleRtRatingMinChange = (value: number) => {
+    if (value !== rtRatingMin) {
+      onFiltersChange?.({ rtRatingMin: value });
+    }
+  };
+
+  const handleUserRatingMinChange = (value: number) => {
+    if (value !== userRatingMin) {
+      onFiltersChange?.({ userRatingMin: value });
+    }
+  };
 
   const getProviderLogoPath = (provider: string) =>
     `/assets/images/providers/${providerLogoMap[provider]}`;
@@ -139,7 +155,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             max={currentYear}
             value={releaseYearMin}
             onChange={(e) =>
-              onFiltersChange?.({ releaseYearMin: Number(e.target.value) })
+              handleReleaseYearMinChange(Number(e.target.value))
             }
           />
           <input
@@ -148,7 +164,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             max={currentYear}
             value={releaseYearMax}
             onChange={(e) =>
-              onFiltersChange?.({ releaseYearMax: Number(e.target.value) })
+              handleReleaseYearMaxChange(Number(e.target.value))
             }
           />
         </div>
@@ -162,7 +178,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             step={0.1}
             value={imdbRatingMin}
             onChange={(e) =>
-              onFiltersChange?.({ imdbRatingMin: Number(e.target.value) })
+              handleImdbRatingMinChange(Number(e.target.value))
             }
           />
         </div>
@@ -176,7 +192,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             step={1}
             value={rtRatingMin}
             onChange={(e) =>
-              onFiltersChange?.({ rtRatingMin: Number(e.target.value) })
+              handleRtRatingMinChange(Number(e.target.value))
             }
           />
         </div>
@@ -190,7 +206,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             step={0.1}
             value={userRatingMin}
             onChange={(e) =>
-              onFiltersChange?.({ userRatingMin: Number(e.target.value) })
+              handleUserRatingMinChange(Number(e.target.value))
             }
           />
         </div>
