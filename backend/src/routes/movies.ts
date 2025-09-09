@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { MoviesService } from '../services/moviesService';
+import { MoviesService, MovieFilters } from '../services/moviesService';
 
 export const createMoviesRouter = (moviesService: MoviesService) => {
   const router = Router();
@@ -15,18 +15,28 @@ export const createMoviesRouter = (moviesService: MoviesService) => {
       return undefined;
     };
 
-    let filters: any = {};
+    let filters: Partial<MovieFilters> = {};
     if (typeof req.query.filters === 'string') {
       try {
         filters = JSON.parse(req.query.filters as string);
+        if (typeof filters.releaseYearMin === 'string') {
+          filters.releaseYearMin = parseInt(filters.releaseYearMin, 10);
+        }
+        if (typeof filters.releaseYearMax === 'string') {
+          filters.releaseYearMax = parseInt(filters.releaseYearMax, 10);
+        }
       } catch {
         // ignore parse errors
       }
     }
-    
+
     if (req.query.genres) filters.genres = parseArray(req.query.genres);
     if (req.query.releaseYear)
       filters.releaseYear = parseInt(req.query.releaseYear as string, 10);
+    if (req.query.releaseYearMin)
+      filters.releaseYearMin = parseInt(req.query.releaseYearMin as string, 10);
+    if (req.query.releaseYearMax)
+      filters.releaseYearMax = parseInt(req.query.releaseYearMax as string, 10);
     if (req.query.imdbRating)
       filters.imdbRating = parseFloat(req.query.imdbRating as string);
     if (req.query.rtRating)

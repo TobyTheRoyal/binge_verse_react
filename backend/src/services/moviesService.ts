@@ -1,7 +1,17 @@
 import { ContentService, Content } from './contentService';
 
+export interface MovieFilters {
+  genres?: string[];
+  releaseYear?: number;
+  releaseYearMin?: number;
+  releaseYearMax?: number;
+  imdbRating?: number;
+  rtRating?: number;
+  providers?: string[];
+}
 export class MoviesService {
   constructor(private contentService: ContentService) {}
+
 
   async findByTmdbId(tmdbId: string): Promise<Content | undefined> {
     const lists = [
@@ -25,15 +35,23 @@ export class MoviesService {
 
     return details ?? cached;
   }
-  
-  async listTrendingMovies(page: number, filters: any): Promise<Content[]> {
+
+  async listTrendingMovies(page: number, filters: MovieFilters): Promise<Content[]> {
     let movies = await this.contentService.fetchTrendingMovies(page);
 
     if (!filters || Object.keys(filters).length === 0) {
       return movies;
     }
 
-    const { genres, releaseYear, imdbRating, rtRating, providers } = filters;
+    const {
+      genres,
+      releaseYear,
+      releaseYearMin,
+      releaseYearMax,
+      imdbRating,
+      rtRating,
+      providers,
+    } = filters;
 
     // Fetch additional details if genre or provider filters are requested
     if ((genres && genres.length) || (providers && providers.length)) {
@@ -53,6 +71,13 @@ export class MoviesService {
       }
 
       if (releaseYear && m.releaseYear !== releaseYear) {
+        return false;
+      }
+
+      if (
+        (typeof releaseYearMin === 'number' && m.releaseYear < releaseYearMin) ||
+        (typeof releaseYearMax === 'number' && m.releaseYear > releaseYearMax)
+      ) {
         return false;
       }
 
