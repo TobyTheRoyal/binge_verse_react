@@ -8,10 +8,10 @@ export const PROVIDERS = [
 ];
 
 export const providerLogoMap: Record<string, string> = {
-  'Netflix': 'netflix.svg',
-  'Disney Plus': 'disney-plus.svg',
-  'Apple TV+': 'apple-tv.svg',
-  'Amazon Prime Video': 'prime.svg',
-  'Paramount Plus': 'paramount.svg',
-  'Sky Go': 'sky.svg',
+  'Netflix': '/assets/images/providers/netflix.svg',
+  'Disney Plus': '/assets/images/providers/disney-plus.svg',
+  'Apple TV+': '/assets/images/providers/apple-tv.svg',
+  'Amazon Prime Video': '/assets/images/providers/prime.svg',
+  'Paramount Plus': '/assets/images/providers/paramount.svg',
+  'Sky Go': '/assets/images/providers/sky.svg',
 };

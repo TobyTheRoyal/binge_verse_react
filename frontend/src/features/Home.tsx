@@ -236,7 +236,7 @@ const Home: React.FC = () => {
                 {category.items.length > 0 ? (
                   category.items.map(item => (
                     <Link
-                      to={`/movies/${item.tmdbId}`}
+                      to={`/${item.type === 'tv' ? 'series' : 'movies'}/${item.tmdbId}`}
                       key={item.tmdbId}
                       className={styles['contentCard']}
                       onMouseLeave={stopRating}
