@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./FilterControls.module.scss";
 import { PROVIDERS, providerLogoMap } from "../../constants/providers";
 import { getGenres } from "../../api/contentApi";
+import { useDebounce } from "../../hooks/useDebounce";
 
 interface FilterOptions {
   genres: string[];
@@ -41,6 +42,24 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 }) => {
   const [genres, setGenres] = useState<string[]>([]);
 
+  const [releaseYearMinValue, setReleaseYearMinValue] = useState(
+    releaseYearMin
+  );
+  const [releaseYearMaxValue, setReleaseYearMaxValue] = useState(
+    releaseYearMax
+  );
+  const [imdbRatingMinValue, setImdbRatingMinValue] = useState(
+    imdbRatingMin
+  );
+  const [rtRatingMinValue, setRtRatingMinValue] = useState(rtRatingMin);
+  const [userRatingMinValue, setUserRatingMinValue] = useState(userRatingMin);
+
+  const debouncedReleaseYearMin = useDebounce(releaseYearMinValue);
+  const debouncedReleaseYearMax = useDebounce(releaseYearMaxValue);
+  const debouncedImdbRatingMin = useDebounce(imdbRatingMinValue);
+  const debouncedRtRatingMin = useDebounce(rtRatingMinValue);
+  const debouncedUserRatingMin = useDebounce(userRatingMinValue);
+
   // Genres laden (entspricht Angulars ContentService.getGenres())
   useEffect(() => {
     async function loadGenres() {
@@ -53,6 +72,56 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     }
     loadGenres();
   }, []);
+
+  useEffect(() => {
+    setReleaseYearMinValue(releaseYearMin);
+  }, [releaseYearMin]);
+
+  useEffect(() => {
+    setReleaseYearMaxValue(releaseYearMax);
+  }, [releaseYearMax]);
+
+  useEffect(() => {
+    setImdbRatingMinValue(imdbRatingMin);
+  }, [imdbRatingMin]);
+
+  useEffect(() => {
+    setRtRatingMinValue(rtRatingMin);
+  }, [rtRatingMin]);
+
+  useEffect(() => {
+    setUserRatingMinValue(userRatingMin);
+  }, [userRatingMin]);
+
+  useEffect(() => {
+    if (debouncedReleaseYearMin !== releaseYearMin) {
+      onFiltersChange?.({ releaseYearMin: debouncedReleaseYearMin });
+    }
+  }, [debouncedReleaseYearMin, releaseYearMin, onFiltersChange]);
+
+  useEffect(() => {
+    if (debouncedReleaseYearMax !== releaseYearMax) {
+      onFiltersChange?.({ releaseYearMax: debouncedReleaseYearMax });
+    }
+  }, [debouncedReleaseYearMax, releaseYearMax, onFiltersChange]);
+
+  useEffect(() => {
+    if (debouncedImdbRatingMin !== imdbRatingMin) {
+      onFiltersChange?.({ imdbRatingMin: debouncedImdbRatingMin });
+    }
+  }, [debouncedImdbRatingMin, imdbRatingMin, onFiltersChange]);
+
+  useEffect(() => {
+    if (debouncedRtRatingMin !== rtRatingMin) {
+      onFiltersChange?.({ rtRatingMin: debouncedRtRatingMin });
+    }
+  }, [debouncedRtRatingMin, rtRatingMin, onFiltersChange]);
+
+  useEffect(() => {
+    if (debouncedUserRatingMin !== userRatingMin) {
+      onFiltersChange?.({ userRatingMin: debouncedUserRatingMin });
+    }
+  }, [debouncedUserRatingMin, userRatingMin, onFiltersChange]);
 
   const toggleGenre = (genre: string) => {
     const updated = genresSelected.includes(genre)
@@ -79,37 +148,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       onFiltersChange?.({ providers: [] });
     }
   };
-
-  const handleReleaseYearMinChange = (value: number) => {
-    if (value !== releaseYearMin) {
-      onFiltersChange?.({ releaseYearMin: value });
-    }
-  };
-
-  const handleReleaseYearMaxChange = (value: number) => {
-    if (value !== releaseYearMax) {
-      onFiltersChange?.({ releaseYearMax: value });
-    }
-  };
-
-  const handleImdbRatingMinChange = (value: number) => {
-    if (value !== imdbRatingMin) {
-      onFiltersChange?.({ imdbRatingMin: value });
-    }
-  };
-
-  const handleRtRatingMinChange = (value: number) => {
-    if (value !== rtRatingMin) {
-      onFiltersChange?.({ rtRatingMin: value });
-    }
-  };
-
-  const handleUserRatingMinChange = (value: number) => {
-    if (value !== userRatingMin) {
-      onFiltersChange?.({ userRatingMin: value });
-    }
-  };
-
+  
   const getProviderLogoPath = (provider: string) =>
     `/assets/images/providers/${providerLogoMap[provider]}`;
 
@@ -147,66 +186,81 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       <div className={styles.sliderColumn}>
         <div className={styles.filterGroup}>
           <label>
-            Release Year: {releaseYearMin} - {releaseYearMax}
+            Release Year: {releaseYearMinValue} - {releaseYearMaxValue}
           </label>
           <input
             type="range"
             min={1900}
             max={currentYear}
-            value={releaseYearMin}
+            value={releaseYearMinValue}
             onChange={(e) =>
-              handleReleaseYearMinChange(Number(e.target.value))
+              setReleaseYearMinValue(Number(e.target.value))
+            }
+            onMouseUp={() =>
+              onFiltersChange?.({ releaseYearMin: releaseYearMinValue })
             }
           />
           <input
             type="range"
             min={1900}
             max={currentYear}
-            value={releaseYearMax}
+            value={releaseYearMaxValue}
             onChange={(e) =>
-              handleReleaseYearMaxChange(Number(e.target.value))
+              setReleaseYearMaxValue(Number(e.target.value))
+            }
+            onMouseUp={() =>
+              onFiltersChange?.({ releaseYearMax: releaseYearMaxValue })
             }
           />
         </div>
 
         <div className={styles.filterGroup}>
-          <label>IMDb Rating ≥ {imdbRatingMin.toFixed(1)}</label>
+          <label>IMDb Rating ≥ {imdbRatingMinValue.toFixed(1)}</label>
           <input
             type="range"
             min={0}
             max={10}
             step={0.1}
-            value={imdbRatingMin}
+            value={imdbRatingMinValue}
             onChange={(e) =>
-              handleImdbRatingMinChange(Number(e.target.value))
+              setImdbRatingMinValue(Number(e.target.value))
+            }
+            onMouseUp={() =>
+              onFiltersChange?.({ imdbRatingMin: imdbRatingMinValue })
             }
           />
         </div>
 
         <div className={styles.filterGroup}>
-          <label>RT Rating ≥ {rtRatingMin}</label>
+          <label>RT Rating ≥ {rtRatingMinValue}</label>
           <input
             type="range"
             min={0}
             max={100}
             step={1}
-            value={rtRatingMin}
+            value={rtRatingMinValue}
             onChange={(e) =>
-              handleRtRatingMinChange(Number(e.target.value))
+              setRtRatingMinValue(Number(e.target.value))
+            }
+            onMouseUp={() =>
+              onFiltersChange?.({ rtRatingMin: rtRatingMinValue })
             }
           />
         </div>
 
         <div className={styles.filterGroup}>
-          <label>My Rating ≥ {userRatingMin.toFixed(1)}</label>
+          <label>My Rating ≥ {userRatingMinValue.toFixed(1)}</label>
           <input
             type="range"
             min={0}
             max={10}
             step={0.1}
-            value={userRatingMin}
+            value={userRatingMinValue}
             onChange={(e) =>
-              handleUserRatingMinChange(Number(e.target.value))
+              setUserRatingMinValue(Number(e.target.value))
+            }
+            onMouseUp={() =>
+              onFiltersChange?.({ userRatingMin: userRatingMinValue })
             }
           />
         </div>
