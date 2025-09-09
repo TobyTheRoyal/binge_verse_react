@@ -227,8 +227,10 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             onChange={(e) =>
               setReleaseYearMinValue(Number(e.target.value))
             }
-            onMouseUp={() =>
-              onFiltersChange?.({ releaseYearMin: releaseYearMinValue })
+            onMouseUp={(e) =>
+              onFiltersChange?.({
+                releaseYearMin: Number(e.currentTarget.value),
+              })
             }
           />
           <input
@@ -239,8 +241,10 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             onChange={(e) =>
               setReleaseYearMaxValue(Number(e.target.value))
             }
-            onMouseUp={() =>
-              onFiltersChange?.({ releaseYearMax: releaseYearMaxValue })
+            onMouseUp={(e) =>
+              onFiltersChange?.({
+                releaseYearMax: Number(e.currentTarget.value),
+              })
             }
           />
         </div>
@@ -256,8 +260,10 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             onChange={(e) =>
               setImdbRatingMinValue(Number(e.target.value))
             }
-            onMouseUp={() =>
-              onFiltersChange?.({ imdbRatingMin: imdbRatingMinValue })
+            onMouseUp={(e) =>
+              onFiltersChange?.({
+                imdbRatingMin: Number(e.currentTarget.value),
+              })
             }
           />
         </div>
@@ -273,8 +279,10 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             onChange={(e) =>
               setRtRatingMinValue(Number(e.target.value))
             }
-            onMouseUp={() =>
-              onFiltersChange?.({ rtRatingMin: rtRatingMinValue })
+            onMouseUp={(e) =>
+              onFiltersChange?.({
+                rtRatingMin: Number(e.currentTarget.value),
+              })
             }
           />
         </div>
@@ -290,8 +298,10 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             onChange={(e) =>
               setUserRatingMinValue(Number(e.target.value))
             }
-            onMouseUp={() =>
-              onFiltersChange?.({ userRatingMin: userRatingMinValue })
+            onMouseUp={(e) =>
+              onFiltersChange?.({
+                userRatingMin: Number(e.currentTarget.value),
+              })
             }
           />
         </div>
