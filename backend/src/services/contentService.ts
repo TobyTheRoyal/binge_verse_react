@@ -28,6 +28,7 @@ export class ContentService {
   private trendingMoviesPageCache = new Map<number, Content[]>();
   private trendingSeriesPageCache = new Map<number, Content[]>();
   private homeItemCache = new Map<string, Content>();
+  private genresCache: string[] = [];
 
   async updateHomeCaches() {
     if (this.updatingHome) return;
@@ -283,6 +284,39 @@ export class ContentService {
       return [];
     }
   }
+
+  async getGenres(): Promise<string[]> {
+    if (this.genresCache.length > 0) {
+      return this.genresCache;
+    }
+
+    const apiKey = process.env.TMDB_API_KEY;
+    const endpoints = [
+      'https://api.themoviedb.org/3/genre/movie/list',
+      'https://api.themoviedb.org/3/genre/tv/list',
+    ];
+
+    try {
+      const genreSet = new Set<string>();
+      for (const endpoint of endpoints) {
+        const res = await fetch(`${endpoint}?api_key=${apiKey}`);
+        const data = await res.json();
+        if (res.ok && Array.isArray(data.genres)) {
+          data.genres.forEach((g: any) => {
+            if (g && typeof g.name === 'string') {
+              genreSet.add(g.name);
+            }
+          });
+        }
+      }
+      this.genresCache = Array.from(genreSet).sort();
+      return this.genresCache;
+    } catch (err) {
+      console.error('Failed to fetch genres', err);
+      return [];
+    }
+  }
+
 
   async searchTmdb(query: string): Promise<Content[]> {
     const apiKey = process.env.TMDB_API_KEY;

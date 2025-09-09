@@ -16,6 +16,10 @@ export const createContentRouter = (contentService: ContentService) => {
     res.json(await contentService.getNewReleases());
   });
 
+  router.get('/genres', async (_req, res) => {
+    res.json(await contentService.getGenres());
+  });
+
   router.post('/search', async (req, res) => {
     const { query } = req.body;
     if (typeof query !== 'string' || query.trim() === '') {

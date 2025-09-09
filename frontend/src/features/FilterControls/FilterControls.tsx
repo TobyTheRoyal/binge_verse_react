@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./FilterControls.module.scss";
 import { PROVIDERS, providerLogoMap } from "../../constants/providers";
+import { getGenres } from "../../api/contentApi";
 
 interface FilterOptions {
   genres: string[];
@@ -44,15 +45,10 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   useEffect(() => {
     async function loadGenres() {
       try {
-        const res = await fetch("/api/content/genres");
-        if (res.ok) {
-          const data = await res.json();
-          setGenres(data);
-        } else {
-          console.error("Failed to load genres");
-        }
-      } catch {
-        console.error("Failed to load genres");
+        const data = await getGenres();
+        setGenres(data);
+      } catch (err) {
+        console.error("Failed to load genres", err);
       }
     }
     loadGenres();

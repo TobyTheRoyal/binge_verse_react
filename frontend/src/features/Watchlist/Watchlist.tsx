@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useWatchlist } from "../../hooks/useWatchlist";
 import { useRatings } from "../../hooks/useRatings";
+import { Link } from "react-router-dom";
 import styles from "./Watchlist.module.scss";
 import FilterControls from "../FilterControls/FilterControls";
 
@@ -73,10 +74,12 @@ const Watchlist: React.FC = () => {
 
       <div className={styles.contentList}>
         {filteredContents.map((item) => (
-          <div
+          <Link
             key={item.tmdbId}
+            to={`/${item.type === 'tv' ? 'series' : 'movies'}/${item.tmdbId}`}
             className={styles.contentCard}
             onMouseLeave={stopRating}
+            onClick={(e) => selectedContentId && e.preventDefault()}
           >
             <div
               className={styles.cardImage}
@@ -89,7 +92,7 @@ const Watchlist: React.FC = () => {
               <button
                 className={styles.addBtn}
                 onClick={(e) => {
-                  e.stopPropagation();
+                  e.preventDefault();
                   removeFromWatchlist(item.tmdbId);
                 }}
               >
@@ -100,7 +103,7 @@ const Watchlist: React.FC = () => {
               <button
                 className={styles.ratingBtn}
                 onClick={(e) => {
-                  e.stopPropagation();
+                  e.preventDefault();
                   startRating(item.tmdbId);
                 }}
               >
@@ -171,7 +174,7 @@ const Watchlist: React.FC = () => {
                 {item.rtRating != null ? `${item.rtRating}%` : "N/A"}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
