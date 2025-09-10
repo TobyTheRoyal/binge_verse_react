@@ -1,19 +1,81 @@
 import { Router, Request, Response } from 'express';
-import { SeriesService } from '../services/seriesService';
+import { SeriesService, SeriesFilters } from '../services/seriesService';
 
 export const createSeriesRouter = (seriesService: SeriesService) => {
   const router = Router();
 
   router.get('/', async (req: Request, res: Response): Promise<void> => {
     const page = parseInt(req.query.page as string, 10) || 1;
-    let filters: any = {};
+    const parseArray = (val: any): string[] | undefined => {
+      if (!val) return undefined;
+      if (Array.isArray(val)) return val.map(String);
+      if (typeof val === 'string') {
+        return val
+          .split(',')
+          .map(v => v.trim())
+          .filter(Boolean);
+      }
+      return undefined;
+    };
+
+    let filters: Partial<SeriesFilters> = {};
     if (typeof req.query.filters === 'string') {
       try {
         filters = JSON.parse(req.query.filters as string);
+        if (typeof filters.releaseYearMin === 'string') {
+          filters.releaseYearMin = parseInt(filters.releaseYearMin, 10);
+        }
+        if (typeof filters.releaseYearMax === 'string') {
+          filters.releaseYearMax = parseInt(filters.releaseYearMax, 10);
+        }
+        if (typeof filters.imdbRatingMin === 'string') {
+          filters.imdbRatingMin = parseFloat(filters.imdbRatingMin);
+        }
+        if (typeof filters.rtRatingMin === 'string') {
+          filters.rtRatingMin = parseFloat(filters.rtRatingMin);
+        }
       } catch {
         // ignore parse errors
       }
     }
+    if (req.query.genres) filters.genres = parseArray(req.query.genres);
+    if (req.query.releaseYear)
+      filters.releaseYear = parseInt(req.query.releaseYear as string, 10);
+    if (req.query.releaseYearMin)
+      filters.releaseYearMin = parseInt(
+        req.query.releaseYearMin as string,
+        10,
+      );
+    if (req.query.releaseYearMax)
+      filters.releaseYearMax = parseInt(
+        req.query.releaseYearMax as string,
+        10,
+      );
+    if (req.query.imdbRating)
+      filters.imdbRating = parseFloat(req.query.imdbRating as string);
+    if (req.query.imdbRatingMin)
+      filters.imdbRatingMin = parseFloat(
+        req.query.imdbRatingMin as string,
+      );
+    if (req.query.rtRating)
+      filters.rtRating = parseFloat(req.query.rtRating as string);
+    if (req.query.rtRatingMin)
+      filters.rtRatingMin = parseFloat(req.query.rtRatingMin as string);
+    if (req.query.providers) filters.providers = parseArray(req.query.providers);
+
+    if (
+      filters.imdbRatingMin !== undefined &&
+      filters.imdbRating === undefined
+    ) {
+      filters.imdbRating = filters.imdbRatingMin;
+    }
+    if (
+      filters.rtRatingMin !== undefined &&
+      filters.rtRating === undefined
+    ) {
+      filters.rtRating = filters.rtRatingMin;
+    }
+    
     const series = await seriesService.listTrendingSeries(page, filters);
     res.json(series);
   });
