@@ -1,9 +1,8 @@
 // src/components/FilterControls/FilterControls.tsx
-import React, { useEffect, useState, useRef} from "react";
+import React, { useEffect, useState} from "react";
 import styles from "./FilterControls.module.scss";
 import { PROVIDERS, providerLogoMap } from "../../constants/providers";
 import { getGenres } from "../../api/contentApi";
-import { useDebounce } from "../../hooks/useDebounce";
 import { defaultFilters } from "../../hooks/useFilters";
 
 const {
@@ -51,7 +50,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 }) => {
   const [genres, setGenres] = useState<string[]>([]);
 
-  const isResetting = useRef(false);
+
 
   const [releaseYearMinValue, setReleaseYearMinValue] = useState(
     releaseYearMin
@@ -64,12 +63,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   );
   const [rtRatingMinValue, setRtRatingMinValue] = useState(rtRatingMin);
   const [userRatingMinValue, setUserRatingMinValue] = useState(userRatingMin);
-
-  const debouncedReleaseYearMin = useDebounce(releaseYearMinValue);
-  const debouncedReleaseYearMax = useDebounce(releaseYearMaxValue);
-  const debouncedImdbRatingMin = useDebounce(imdbRatingMinValue);
-  const debouncedRtRatingMin = useDebounce(rtRatingMinValue);
-  const debouncedUserRatingMin = useDebounce(userRatingMinValue);
 
   // Genres laden (entspricht Angulars ContentService.getGenres())
   useEffect(() => {
@@ -103,56 +96,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   useEffect(() => {
     setUserRatingMinValue(userRatingMin);
   }, [userRatingMin]);
-
-  useEffect(() => {
-    if (isResetting.current) {
-      isResetting.current = false;
-      return;
-    }
-    if (debouncedReleaseYearMin !== releaseYearMin) {
-      onFiltersChange?.({ releaseYearMin: debouncedReleaseYearMin });
-    }
-  }, [debouncedReleaseYearMin, releaseYearMin, onFiltersChange]);
-
-  useEffect(() => {
-    if (isResetting.current) {
-      isResetting.current = false;
-      return;
-    }
-    if (debouncedReleaseYearMax !== releaseYearMax) {
-      onFiltersChange?.({ releaseYearMax: debouncedReleaseYearMax });
-    }
-  }, [debouncedReleaseYearMax, releaseYearMax, onFiltersChange]);
-
-  useEffect(() => {
-    if (isResetting.current) {
-      isResetting.current = false;
-      return;
-    }
-    if (debouncedImdbRatingMin !== imdbRatingMin) {
-      onFiltersChange?.({ imdbRatingMin: debouncedImdbRatingMin });
-    }
-  }, [debouncedImdbRatingMin, imdbRatingMin, onFiltersChange]);
-
-  useEffect(() => {
-    if (isResetting.current) {
-      isResetting.current = false;
-      return;
-    }
-    if (debouncedRtRatingMin !== rtRatingMin) {
-      onFiltersChange?.({ rtRatingMin: debouncedRtRatingMin });
-    }
-  }, [debouncedRtRatingMin, rtRatingMin, onFiltersChange]);
-
-  useEffect(() => {
-    if (isResetting.current) {
-      isResetting.current = false;
-      return;
-    }
-    if (debouncedUserRatingMin !== userRatingMin) {
-      onFiltersChange?.({ userRatingMin: debouncedUserRatingMin });
-    }
-  }, [debouncedUserRatingMin, userRatingMin, onFiltersChange]);
 
   const toggleGenre = (genre: string) => {
     const updated = genresSelected.includes(genre)
@@ -224,28 +167,22 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             min={1900}
             max={currentYear}
             value={releaseYearMinValue}
-            onChange={(e) =>
-              setReleaseYearMinValue(Number(e.target.value))
-            }
-            onMouseUp={(e) =>
-              onFiltersChange?.({
-                releaseYearMin: Number(e.currentTarget.value),
-              })
-            }
+            onInput={(e) => {
+              const value = Number(e.currentTarget.value);
+              setReleaseYearMinValue(value);
+              onFiltersChange?.({ releaseYearMin: value });
+            }}
           />
           <input
             type="range"
             min={1900}
             max={currentYear}
             value={releaseYearMaxValue}
-            onChange={(e) =>
-              setReleaseYearMaxValue(Number(e.target.value))
-            }
-            onMouseUp={(e) =>
-              onFiltersChange?.({
-                releaseYearMax: Number(e.currentTarget.value),
-              })
-            }
+            onInput={(e) => {
+              const value = Number(e.currentTarget.value);
+              setReleaseYearMaxValue(value);
+              onFiltersChange?.({ releaseYearMax: value });
+            }}
           />
         </div>
 
@@ -257,14 +194,11 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             max={10}
             step={0.1}
             value={imdbRatingMinValue}
-            onChange={(e) =>
-              setImdbRatingMinValue(Number(e.target.value))
-            }
-            onMouseUp={(e) =>
-              onFiltersChange?.({
-                imdbRatingMin: Number(e.currentTarget.value),
-              })
-            }
+            onInput={(e) => {
+              const value = Number(e.currentTarget.value);
+              setImdbRatingMinValue(value);
+              onFiltersChange?.({ imdbRatingMin: value });
+            }}
           />
         </div>
 
@@ -276,14 +210,11 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             max={100}
             step={1}
             value={rtRatingMinValue}
-            onChange={(e) =>
-              setRtRatingMinValue(Number(e.target.value))
-            }
-            onMouseUp={(e) =>
-              onFiltersChange?.({
-                rtRatingMin: Number(e.currentTarget.value),
-              })
-            }
+            onInput={(e) => {
+              const value = Number(e.currentTarget.value);
+              setRtRatingMinValue(value);
+              onFiltersChange?.({ rtRatingMin: value });
+            }}
           />
         </div>
 
@@ -295,14 +226,11 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             max={10}
             step={0.1}
             value={userRatingMinValue}
-            onChange={(e) =>
-              setUserRatingMinValue(Number(e.target.value))
-            }
-            onMouseUp={(e) =>
-              onFiltersChange?.({
-                userRatingMin: Number(e.currentTarget.value),
-              })
-            }
+            onInput={(e) => {
+              const value = Number(e.currentTarget.value);
+              setUserRatingMinValue(value);
+              onFiltersChange?.({ userRatingMin: value });
+            }}
           />
         </div>
 
@@ -341,7 +269,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({
       <button
         className={styles.resetBtn}
         onClick={() => {
-          isResetting.current = true;
           setReleaseYearMinValue(DEFAULT_RELEASE_YEAR_MIN);
           setReleaseYearMaxValue(DEFAULT_RELEASE_YEAR_MAX);
           setImdbRatingMinValue(DEFAULT_IMDB_RATING_MIN);
