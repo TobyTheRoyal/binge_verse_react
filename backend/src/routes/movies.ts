@@ -25,6 +25,12 @@ export const createMoviesRouter = (moviesService: MoviesService) => {
         if (typeof filters.releaseYearMax === 'string') {
           filters.releaseYearMax = parseInt(filters.releaseYearMax, 10);
         }
+        if (typeof filters.imdbRatingMin === 'string') {
+          filters.imdbRatingMin = parseFloat(filters.imdbRatingMin);
+        }
+        if (typeof filters.rtRatingMin === 'string') {
+          filters.rtRatingMin = parseFloat(filters.rtRatingMin);
+        }
       } catch {
         // ignore parse errors
       }
@@ -39,9 +45,26 @@ export const createMoviesRouter = (moviesService: MoviesService) => {
       filters.releaseYearMax = parseInt(req.query.releaseYearMax as string, 10);
     if (req.query.imdbRating)
       filters.imdbRating = parseFloat(req.query.imdbRating as string);
+    if (req.query.imdbRatingMin)
+      filters.imdbRatingMin = parseFloat(req.query.imdbRatingMin as string);
     if (req.query.rtRating)
       filters.rtRating = parseFloat(req.query.rtRating as string);
+    if (req.query.rtRatingMin)
+      filters.rtRatingMin = parseFloat(req.query.rtRatingMin as string);
     if (req.query.providers) filters.providers = parseArray(req.query.providers);
+
+    if (
+      filters.imdbRatingMin !== undefined &&
+      filters.imdbRating === undefined
+    ) {
+      filters.imdbRating = filters.imdbRatingMin;
+    }
+    if (
+      filters.rtRatingMin !== undefined &&
+      filters.rtRating === undefined
+    ) {
+      filters.rtRating = filters.rtRatingMin;
+    }
 
     const movies = await moviesService.listTrendingMovies(page, filters);
     res.json(movies);

@@ -6,7 +6,9 @@ export interface MovieFilters {
   releaseYearMin?: number;
   releaseYearMax?: number;
   imdbRating?: number;
+  imdbRatingMin?: number;
   rtRating?: number;
+  rtRatingMin?: number;
   providers?: string[];
 }
 export class MoviesService {
@@ -49,7 +51,9 @@ export class MoviesService {
       releaseYearMin,
       releaseYearMax,
       imdbRating,
+      imdbRatingMin,
       rtRating,
+      rtRatingMin,
       providers,
     } = filters;
 
@@ -81,11 +85,13 @@ export class MoviesService {
         return false;
       }
 
-      if (imdbRating && (m.imdbRating ?? 0) < imdbRating) {
+      const imdbThreshold = imdbRatingMin ?? imdbRating;
+      if (imdbThreshold && (m.imdbRating ?? 0) < imdbThreshold) {
         return false;
       }
 
-      if (rtRating && (m.rtRating ?? 0) < rtRating) {
+      const rtThreshold = rtRatingMin ?? rtRating;
+      if (rtThreshold && (m.rtRating ?? 0) < rtThreshold) {
         return false;
       }
 
