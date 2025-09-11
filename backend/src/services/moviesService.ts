@@ -1,4 +1,5 @@
 import { ContentService, Content } from './contentService';
+import { RatingsService } from './ratingsService';
 
 export interface MovieFilters {
   genres?: string[];
@@ -10,9 +11,13 @@ export interface MovieFilters {
   rtRating?: number;
   rtRatingMin?: number;
   providers?: string[];
+  userRatingMin?: number;
 }
 export class MoviesService {
-  constructor(private contentService: ContentService) {}
+  constructor(
+    private contentService: ContentService,
+    private ratingsService: RatingsService = new RatingsService(),
+  ) {}
 
 
   async findByTmdbId(tmdbId: string): Promise<Content | undefined> {
@@ -38,7 +43,11 @@ export class MoviesService {
     return details ?? cached;
   }
 
-  async listTrendingMovies(page: number, filters: MovieFilters): Promise<Content[]> {
+  async listTrendingMovies(
+    page: number,
+    filters: MovieFilters,
+    userId: string,
+  ): Promise<Content[]> {
     let movies = await this.contentService.fetchTrendingMovies(page);
 
     if (!filters || Object.keys(filters).length === 0) {
@@ -55,6 +64,7 @@ export class MoviesService {
       rtRating,
       rtRatingMin,
       providers,
+      userRatingMin,
     } = filters;
 
     // Fetch additional details if genre or provider filters are requested
@@ -67,7 +77,7 @@ export class MoviesService {
       );
     }
 
-    return movies.filter(m => {
+    let results = movies.filter(m => {
       if (genres && genres.length) {
         if (!m.genres || !genres.every((g: string) => m.genres!.includes(g))) {
           return false;
@@ -103,5 +113,17 @@ export class MoviesService {
 
       return true;
     });
+    if (userRatingMin && userRatingMin > 0) {
+      const ratingsMap = await this.ratingsService.getRatingsMap(
+        userId,
+        results.map(m => m.tmdbId),
+      );
+      results = results.filter(m => {
+        const rating = ratingsMap[m.tmdbId];
+        return rating !== undefined && rating >= userRatingMin;
+      });
+    }
+
+    return results;
   }
 }

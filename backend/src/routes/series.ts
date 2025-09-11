@@ -1,8 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { SeriesService, SeriesFilters } from '../services/seriesService';
+import { jwtAuth } from '../middleware/jwt';
 
 export const createSeriesRouter = (seriesService: SeriesService) => {
   const router = Router();
+  const auth = jwtAuth();
+
+  router.use(auth);
 
   router.get('/', async (req: Request, res: Response): Promise<void> => {
     const page = parseInt(req.query.page as string, 10) || 1;
@@ -34,6 +38,9 @@ export const createSeriesRouter = (seriesService: SeriesService) => {
         if (typeof filters.rtRatingMin === 'string') {
           filters.rtRatingMin = parseFloat(filters.rtRatingMin);
         }
+        if (typeof filters.userRatingMin === 'string') {
+          filters.userRatingMin = parseFloat(filters.userRatingMin);
+        }
       } catch {
         // ignore parse errors
       }
@@ -62,6 +69,8 @@ export const createSeriesRouter = (seriesService: SeriesService) => {
     if (req.query.rtRatingMin)
       filters.rtRatingMin = parseFloat(req.query.rtRatingMin as string);
     if (req.query.providers) filters.providers = parseArray(req.query.providers);
+    if (req.query.userRatingMin)
+      filters.userRatingMin = parseFloat(req.query.userRatingMin as string);
 
     if (
       filters.imdbRatingMin !== undefined &&
@@ -76,7 +85,8 @@ export const createSeriesRouter = (seriesService: SeriesService) => {
       filters.rtRating = filters.rtRatingMin;
     }
     
-    const series = await seriesService.listTrendingSeries(page, filters);
+    const user = (req as any).user;
+    const series = await seriesService.listTrendingSeries(page, filters, user.id);
     res.json(series);
   });
 

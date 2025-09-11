@@ -25,6 +25,21 @@ import { ContentService, Content } from './contentService';
     const docs = await RatingModel.find({ userId }).exec();
     return docs;
   }
+  async getRatingsMap(
+    userId: string,
+    tmdbIds: string[],
+  ): Promise<Record<string, number>> {
+    const docs = await RatingModel.find({
+      userId,
+      tmdbId: { $in: tmdbIds },
+    }).exec();
+    const map: Record<string, number> = {};
+    for (const doc of docs) {
+      map[doc.tmdbId] = doc.rating;
+    }
+    return map;
+  }
+  
    async getUserRatedContent(
     userId: string
   ): Promise<(Content & { rating: number })[]> {

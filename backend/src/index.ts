@@ -30,8 +30,8 @@ const authService = new AuthService(usersService);
 const contentService = new ContentService();
 const watchlistService = new WatchlistService(contentService);
 const ratingsService = new RatingsService();
-const moviesService = new MoviesService(contentService);
-const seriesService = new SeriesService(contentService);
+const moviesService = new MoviesService(contentService, ratingsService);
+const seriesService = new SeriesService(contentService, ratingsService);
 
 // Schedule cache updates replacing Nest ScheduleModule with node-cron
 cron.schedule('0 2 * * *', () => contentService.updateHomeCaches());

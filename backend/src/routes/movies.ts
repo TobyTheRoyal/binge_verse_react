@@ -1,8 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { MoviesService, MovieFilters } from '../services/moviesService';
+import { jwtAuth } from '../middleware/jwt';
 
 export const createMoviesRouter = (moviesService: MoviesService) => {
   const router = Router();
+  const auth = jwtAuth();
+
+  router.use(auth);
 
   router.get('/', async (req: Request, res: Response): Promise<void> => {
     const page = parseInt(req.query.page as string, 10) || 1;
@@ -31,6 +35,9 @@ export const createMoviesRouter = (moviesService: MoviesService) => {
         if (typeof filters.rtRatingMin === 'string') {
           filters.rtRatingMin = parseFloat(filters.rtRatingMin);
         }
+        if (typeof filters.userRatingMin === 'string') {
+          filters.userRatingMin = parseFloat(filters.userRatingMin);
+        }
       } catch {
         // ignore parse errors
       }
@@ -51,7 +58,10 @@ export const createMoviesRouter = (moviesService: MoviesService) => {
       filters.rtRating = parseFloat(req.query.rtRating as string);
     if (req.query.rtRatingMin)
       filters.rtRatingMin = parseFloat(req.query.rtRatingMin as string);
+    
     if (req.query.providers) filters.providers = parseArray(req.query.providers);
+    if (req.query.userRatingMin)
+      filters.userRatingMin = parseFloat(req.query.userRatingMin as string);
 
     if (
       filters.imdbRatingMin !== undefined &&
@@ -66,7 +76,8 @@ export const createMoviesRouter = (moviesService: MoviesService) => {
       filters.rtRating = filters.rtRatingMin;
     }
 
-    const movies = await moviesService.listTrendingMovies(page, filters);
+    const user = (req as any).user;
+    const movies = await moviesService.listTrendingMovies(page, filters, user.id);
     res.json(movies);
   });
 
