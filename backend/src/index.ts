@@ -39,7 +39,7 @@ const usersService = new UsersService();
 const authService = new AuthService(usersService);
 const contentService = new ContentService();
 const watchlistService = new WatchlistService(contentService);
-const ratingsService = new RatingsService();
+const ratingsService = new RatingsService(contentService);
 const moviesService = new MoviesService(contentService, ratingsService);
 const seriesService = new SeriesService(contentService, ratingsService);
 

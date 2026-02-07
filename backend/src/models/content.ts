@@ -2,8 +2,9 @@ import { Schema, model, Document, Types } from 'mongoose';
 import { CastMemberDocument, CastMemberSchema } from './castMember';
 
 export interface ContentDocument extends Document {
+  cacheKey: string;
   tmdbId: string;
-  type: string;
+  type: 'movie' | 'tv';
   title: string;
   releaseYear?: number;
   poster?: string;
@@ -14,11 +15,15 @@ export interface ContentDocument extends Document {
   providers?: string[];
   overview?: string;
   cast?: Types.DocumentArray<CastMemberDocument>;
+  lastSyncedAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const ContentSchema = new Schema<ContentDocument>({
-  tmdbId: { type: String, required: true, unique: true },
-  type: { type: String, required: true },
+  cacheKey: { type: String, required: true, unique: true, index: true },
+  tmdbId: { type: String, required: true, index: true },
+  type: { type: String, required: true, enum: ['movie', 'tv'], index: true },
   title: { type: String, required: true },
   releaseYear: { type: Number },
   poster: { type: String },
@@ -29,6 +34,9 @@ const ContentSchema = new Schema<ContentDocument>({
   providers: [{ type: String }],
   overview: { type: String },
   cast: [CastMemberSchema],
-});
+  lastSyncedAt: { type: Date, default: Date.now, index: true },
+}, { timestamps: true });
+
+ContentSchema.index({ tmdbId: 1, type: 1 }, { unique: true });
 
 export const ContentModel = model<ContentDocument>('Content', ContentSchema);

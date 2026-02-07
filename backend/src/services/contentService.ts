@@ -1,3 +1,5 @@
+import { ContentModel } from '../models/content';
+
 export interface Content {
   id: number;
   tmdbId: string;
@@ -19,6 +21,7 @@ export interface Content {
 }
 
 export class ContentService {
+  private static readonly CONTENT_CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24h
   private cacheTrending: Content[] = [];
   private cacheTopRated: Content[] = [];
   private cacheNewReleases: Content[] = [];
@@ -28,7 +31,75 @@ export class ContentService {
   private trendingMoviesPageCache = new Map<number, Content[]>();
   private trendingSeriesPageCache = new Map<number, Content[]>();
   private homeItemCache = new Map<string, Content>();
+  private omdbCache = new Map<string, { imdbRating: number | null; rtRating: number | null }>();
   private genresCache: string[] = [];
+
+  private getCacheKey(tmdbId: string | number, type: 'movie' | 'tv'): string {
+    return `${type}-${tmdbId}`;
+  }
+
+  private mapDocToContent(doc: any): Content {
+    return {
+      id: Number(doc.tmdbId),
+      tmdbId: doc.tmdbId,
+      title: doc.title,
+      releaseYear: doc.releaseYear ?? 0,
+      poster: doc.poster ?? '',
+      type: doc.type,
+      imdbRating: doc.imdbRating ?? null,
+      rtRating: doc.rtRating ?? null,
+      overview: doc.overview ?? undefined,
+      genres: Array.isArray(doc.genres) ? doc.genres : undefined,
+      providers: Array.isArray(doc.providers) ? doc.providers : undefined,
+      cast: Array.isArray(doc.cast)
+        ? doc.cast.map((c: any) => ({
+            tmdbId: c.tmdbId,
+            name: c.name,
+            character: c.character,
+            profilePathUrl: c.profilePathUrl,
+          }))
+        : undefined,
+    };
+  }
+
+  private isFresh(lastSyncedAt?: Date): boolean {
+    if (!lastSyncedAt) return false;
+    return Date.now() - new Date(lastSyncedAt).getTime() < ContentService.CONTENT_CACHE_TTL_MS;
+  }
+
+  private async getCachedContent(
+    tmdbId: string,
+    type: 'movie' | 'tv',
+  ): Promise<{ content: Content; fresh: boolean } | null> {
+    const doc = await ContentModel.findOne({ tmdbId, type }).lean().exec();
+    if (!doc) return null;
+    return {
+      content: this.mapDocToContent(doc),
+      fresh: this.isFresh(doc.lastSyncedAt as Date | undefined),
+    };
+  }
+
+  private async upsertCachedContent(content: Content): Promise<void> {
+    await ContentModel.findOneAndUpdate(
+      { tmdbId: content.tmdbId, type: content.type },
+      {
+        cacheKey: this.getCacheKey(content.tmdbId, content.type),
+        tmdbId: content.tmdbId,
+        type: content.type,
+        title: content.title,
+        releaseYear: content.releaseYear,
+        poster: content.poster,
+        imdbRating: content.imdbRating ?? null,
+        rtRating: content.rtRating ?? null,
+        overview: content.overview ?? null,
+        genres: content.genres ?? [],
+        providers: content.providers ?? [],
+        cast: content.cast ?? [],
+        lastSyncedAt: new Date(),
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    ).exec();
+  }
 
   async updateHomeCaches() {
     if (this.updatingHome) return;
@@ -69,6 +140,11 @@ export class ContentService {
     if (this.homeItemCache.has(cacheKey)) {
       return this.homeItemCache.get(cacheKey)!;
     }
+    const cached = await this.getCachedContent(String(id), type);
+    if (cached?.fresh) {
+      this.homeItemCache.set(cacheKey, cached.content);
+      return cached.content;
+    }
     const url = `https://api.themoviedb.org/3/${type}/${id}?api_key=${process.env.TMDB_API_KEY}${
       type === 'tv' ? '&append_to_response=external_ids' : ''
     }`;
@@ -89,6 +165,10 @@ export class ContentService {
           ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
           : '',
         type,
+        imdbRating:
+          typeof data.vote_average === 'number'
+            ? Number(data.vote_average.toFixed(1))
+            : null,
       };
       const imdbId = data.imdb_id || data.external_ids?.imdb_id;
       if (imdbId) {
@@ -99,6 +179,7 @@ export class ContentService {
         }
       }
       this.homeItemCache.set(cacheKey, content);
+      await this.upsertCachedContent(content);
       return content;
     } catch (err) {
       console.error(`Failed to fetch movie ${id}`, err);
@@ -112,32 +193,53 @@ export class ContentService {
     if (!imdbId) {
       return { imdbRating: null, rtRating: null };
     }
-    const url = `https://www.omdbapi.com/?i=${imdbId}&apikey=${process.env.OMDB_API_KEY}`;
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.Response === 'False') {
-        return { imdbRating: null, rtRating: null };
-      }
-      const imdbRating = parseFloat(data.imdbRating) || null;
-      let rtRating: number | null = null;
-      if (Array.isArray(data.Ratings)) {
-        const rt = data.Ratings.find((r: any) => r.Source === 'Rotten Tomatoes');
-        if (rt && typeof rt.Value === 'string') {
-          rtRating = parseInt(rt.Value.replace('%', ''), 10);
-        }
-      }
-      return { imdbRating, rtRating };
-    } catch (err) {
-      console.error(`Failed to fetch OMDb data for ${imdbId}`, err);
+    if (this.omdbCache.has(imdbId)) {
+      return this.omdbCache.get(imdbId)!;
+    }
+    if (!process.env.OMDB_API_KEY) {
       return { imdbRating: null, rtRating: null };
     }
+    const url = `https://www.omdbapi.com/?i=${imdbId}&apikey=${process.env.OMDB_API_KEY}`;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.Response === 'False') {
+          const empty = { imdbRating: null, rtRating: null };
+          this.omdbCache.set(imdbId, empty);
+          return empty;
+        }
+        const imdbRating = parseFloat(data.imdbRating) || null;
+        let rtRating: number | null = null;
+        if (Array.isArray(data.Ratings)) {
+          const rt = data.Ratings.find((r: any) => r.Source === 'Rotten Tomatoes');
+          if (rt && typeof rt.Value === 'string') {
+            rtRating = parseInt(rt.Value.replace('%', ''), 10);
+          }
+        }
+        const parsed = { imdbRating, rtRating };
+        this.omdbCache.set(imdbId, parsed);
+        return parsed;
+      } catch (err) {
+        if (attempt === 3) {
+          console.error(`Failed to fetch OMDb data for ${imdbId}`, err);
+          return { imdbRating: null, rtRating: null };
+        }
+        await new Promise(resolve => setTimeout(resolve, 300 * attempt));
+      }
+    }
+    return { imdbRating: null, rtRating: null };
   }
 
   async getContentDetails(
     tmdbId: string,
     type: 'movie' | 'tv'
   ): Promise<Content | null> {
+    const cached = await this.getCachedContent(tmdbId, type);
+    if (cached?.fresh && cached.content.overview && cached.content.cast?.length) {
+      return cached.content;
+    }
+
     const apiKey = process.env.TMDB_API_KEY;
     const url = `https://api.themoviedb.org/3/${type}/${tmdbId}?api_key=${apiKey}&append_to_response=external_ids,credits,watch/providers`;
     try {
@@ -159,6 +261,10 @@ export class ContentService {
           : '',
         type,
         overview: data.overview || '',
+        imdbRating:
+          typeof data.vote_average === 'number'
+            ? Number(data.vote_average.toFixed(1))
+            : null,
         genres: Array.isArray(data.genres)
           ? data.genres.map((g: any) => g.name)
           : undefined,
@@ -196,6 +302,7 @@ export class ContentService {
         content.imdbRating = omdb.imdbRating ?? null;
         content.rtRating = omdb.rtRating ?? null;
       }
+      await this.upsertCachedContent(content);
       return content;
     } catch (err) {
       console.error(`Failed to fetch ${type} ${tmdbId}`, err);
