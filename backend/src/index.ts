@@ -21,7 +21,17 @@ import { createUsersRouter } from './routes/users';
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+const corsOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin: corsOrigins,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Services
