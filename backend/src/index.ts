@@ -49,7 +49,7 @@ cron.schedule('0 2 * * *', () => contentService.updateHomeCaches());
 // Routes
 
 
-const port = process.env.PORT || 3000;
+const port = Number(process.env.PORT || 8080);
 const mongodbUri = process.env.MONGODB_URI;
 async function start() {
   try {
@@ -68,8 +68,8 @@ async function start() {
     app.use('/series', createSeriesRouter(seriesService));
     app.use('/users', createUsersRouter(usersService));
 
-    app.listen(port, () => {
-      console.log(`Express server running on port ${port}`);
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`Express server running on 0.0.0.0:${port}`);
     });
   } catch (error) {
     console.error('Failed to connect to MongoDB', error);
