@@ -127,8 +127,8 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchUserRatings().catch((err: unknown) => console.error('Failed to fetch ratings', err));
     if (loggedIn) {
+      fetchUserRatings().catch((err: unknown) => console.error('Failed to fetch ratings', err));
       loadCategories();
     } else {
       loadPublicCategories();

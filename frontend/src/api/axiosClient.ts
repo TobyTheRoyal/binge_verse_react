@@ -18,7 +18,13 @@ axiosClient.interceptors.request.use(config => {
 axiosClient.interceptors.response.use(
   response => response,
   error => {
-    if (error.response && error.response.status === 401) {
+    const hasAuthToken = Boolean(localStorage.getItem('auth_token'));
+    const hasAuthHeader = Boolean(
+      error?.config?.headers?.Authorization ||
+        error?.config?.headers?.authorization,
+    );
+
+    if (error.response && error.response.status === 401 && (hasAuthToken || hasAuthHeader)) {
       localStorage.removeItem('auth_token');
       window.location.href = '/auth/login';
     }
