@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRatings } from "../../hooks/useRatings";
-import styles from "./rating.module.scss";
+import styles from "./Rating.module.scss";
 
 const Rating: React.FC = () => {
   const { ratings, fetchUserRatings, rateContent } = useRatings();
