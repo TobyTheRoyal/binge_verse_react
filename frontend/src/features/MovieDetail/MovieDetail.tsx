@@ -122,6 +122,7 @@ const MovieDetail: React.FC = () => {
                   </button>
                   <h3>Rate “{movie.title}”</h3>
                   <input
+                    autoFocus
                     type="text"
                     value={ratingScore}
                     onChange={(e) => setRatingScore(e.target.value)}

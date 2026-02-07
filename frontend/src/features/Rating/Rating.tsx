@@ -91,6 +91,7 @@ const Rating: React.FC = () => {
               </button>
               <h3>Rate {selectedContentTitle}</h3>
               <input
+                autoFocus
                 type="text"
                 value={ratingScore}
                 onChange={(e) => setRatingScore(e.target.value)}

@@ -125,14 +125,17 @@ html, body {
 }
 
 .ratingCard {
-  background: rgba(42, 42, 42, 0.9);
-  padding: variables.$spacing-sm;
-  border-radius: variables.$border-radius-sm;
+  position: relative;
+  background: rgba(24, 24, 24, 0.96);
+  padding: variables.$spacing-lg;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80%;
-  max-width: 240px;
+  gap: 10px;
+  width: 86%;
+  max-width: 320px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: variables.$shadow-md;
 
   .closeBtn {
@@ -153,21 +156,24 @@ html, body {
 
   h3 {
     color: variables.$text-color;
-    font-size: variables.$font-size-body;
+    font-size: 1.05rem;
     font-weight: 700;
-    margin-bottom: variables.$spacing-md;
+    margin: 0 0 4px;
     text-align: center;
+    line-height: 1.3;
   }
 
   .ratingInputField {
-    width: 100px;
-    padding: variables.$spacing-sm;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
     border: 2px solid variables.$accent-color;
-    border-radius: variables.$border-radius-sm;
-    background: transparent;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
     color: variables.$text-color;
     text-align: center;
-    font-size: variables.$font-size-small;
+    font-size: 1.08rem;
+    font-weight: 600;
     font-family: variables.$font-family;
     transition: variables.$transition-fast;
 
@@ -182,13 +188,15 @@ html, body {
     background: linear-gradient(135deg, variables.$accent-color, darken(variables.$accent-color, 15%));
     color: variables.$text-color;
     border: none;
-    padding: variables.$spacing-sm variables.$spacing-md;
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 16px;
     border-radius: variables.$border-radius-lg;
-    font-size: variables.$font-size-small;
+    font-size: 0.98rem;
     font-weight: 600;
     font-family: variables.$font-family;
     cursor: pointer;
-    margin-top: variables.$spacing-md;
+    margin-top: 6px;
     transition: variables.$transition-fast;
 
     &:hover {
@@ -337,5 +345,5 @@ html, body {
 
 @media (max-width: 768px) {
   .posterWrapper { flex: 0 0 240px; }
-  .ratingCard { width: 90%; max-width: 220px; }
+  .ratingCard { width: 90%; max-width: 300px; }
 }

@@ -123,6 +123,7 @@ const Watchlist: React.FC = () => {
                       </button>
                       <h3>Rate “{item.title}”</h3>
                       <input
+                        autoFocus
                         type="text"
                         value={ratingScore}
                         onChange={(e) => setRatingScore(e.target.value)}

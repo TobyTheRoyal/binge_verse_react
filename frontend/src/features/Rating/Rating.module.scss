@@ -71,14 +71,17 @@ h2 {
 }
 
 .ratingCard {
-  background: #2a2a2a;
-  padding: 20px;
-  border-radius: 8px;
+  position: relative;
+  background: rgba(24, 24, 24, 0.96);
+  padding: 24px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  min-width: 300px;
+  gap: 10px;
+  width: 90%;
+  max-width: 340px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .closeBtn {
@@ -91,22 +94,28 @@ h2 {
 }
 
 .ratingInputField {
-  width: 100px;
-  padding: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
   border: 2px solid variables.$accent-color;
-  border-radius: 4px;
-  background: transparent;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
   color: #fff;
   text-align: center;
+  font-size: 1.08rem;
+  font-weight: 600;
 }
 
 .submitRatingBtn {
   background: variables.$accent-color;
   color: #fff;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: 600;
 
   &:hover {
     background: #00a899;

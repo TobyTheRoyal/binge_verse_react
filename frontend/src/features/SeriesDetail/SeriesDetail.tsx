@@ -78,6 +78,7 @@ const SeriesDetail: React.FC = () => {
                   <button className={styles.closeBtn} onClick={cancelRating}>✕</button>
                   <h3>Rate “{series.title}”</h3>
                   <input
+                    autoFocus
                     type="text"
                     value={ratingScore}
                     onChange={(e) => setRatingScore(e.target.value)}

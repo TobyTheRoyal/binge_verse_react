@@ -235,6 +235,7 @@ const History: React.FC = () => {
                       </button>
                       <h3>Rate “{entry.title}”</h3>
                       <input
+                        autoFocus
                         type="text"
                         value={ratingScore}
                         onChange={(e) => setRatingScore(e.target.value)}

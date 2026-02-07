@@ -172,6 +172,7 @@ const Series: React.FC = () => {
                       </button>
                       <h3>Rate “{s.title}”</h3>
                       <input
+                        autoFocus
                         type="text"
                         value={ratingScore}
                         onChange={(e) => setRatingScore(e.target.value)}

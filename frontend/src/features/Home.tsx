@@ -295,6 +295,7 @@ const Home: React.FC = () => {
                                   </button>
                                   <h3>Rate “{item.title}”</h3>
                                   <input
+                                    autoFocus
                                     ref={ratingInputRef}
                                     type="text"
                                     value={ratingScore}
