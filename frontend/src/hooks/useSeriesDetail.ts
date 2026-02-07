@@ -8,15 +8,6 @@ interface Actor {
   profilePathUrl: string;
 }
 
-interface WatchlistEntry {
-  tmdbId: string;
-}
-
-interface Rating {
-  tmdbId: string;
-  rating: number;
-}
-
 export interface SeriesDetail {
   tmdbId: string;
   title: string;
@@ -45,24 +36,15 @@ export function useSeriesDetail(id?: string) {
     if (!id) return;
     setIsLoading(true);
     try {
-      // 1. Serie laden
-      const { data } = await axiosClient.get<SeriesDetail>(
-        `/series/${id}`
-      );
-      setSeries(data);
+      const [seriesRes, watchlistRes, ratingRes] = await Promise.all([
+        axiosClient.get<SeriesDetail>(`/series/${id}`),
+        axiosClient.get<{ exists: boolean }>(`/watchlist/${id}/exists`),
+        axiosClient.get<{ rating?: number | null }>(`/ratings/${id}`),
+      ]);
 
-      // 2. Watchlist Status
-      const { data: wl } = await axiosClient.get<WatchlistEntry[]>(
-        `/watchlist`
-      );
-      setIsInWL(wl.some((c) => c.tmdbId === id));
-
-      // 3. Ratings
-      const { data: ratings } = await axiosClient.get<Rating[]>(
-        `/ratings`
-      );
-      const myRating = ratings.find((r) => r.tmdbId === id)?.rating ?? null;
-      setUserRating(myRating);
+      setSeries(seriesRes.data);
+      setIsInWL(Boolean(watchlistRes.data?.exists));
+      setUserRating(ratingRes.data?.rating ?? null);
     } catch (err) {
       console.error("Failed to load series detail", err);
     } finally {

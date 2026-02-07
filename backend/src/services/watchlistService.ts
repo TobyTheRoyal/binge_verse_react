@@ -49,4 +49,9 @@ export class WatchlistService {
   async removeFromWatchlist(userId: string, tmdbId: string): Promise<void> {
     await WatchlistModel.deleteOne({ userId, tmdbId }).exec();
   }
+
+  async isInWatchlist(userId: string, tmdbId: string): Promise<boolean> {
+    const existing = await WatchlistModel.exists({ userId, tmdbId });
+    return Boolean(existing);
+  }
 }

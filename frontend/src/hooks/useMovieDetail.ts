@@ -7,15 +7,6 @@ interface Actor {
   profilePathUrl: string;
 }
 
-interface WatchlistEntry {
-  tmdbId: string;
-}
-
-interface Rating {
-  tmdbId: string;
-  rating: number;
-}
-
 export interface MovieDetail {
   tmdbId: string;
   title: string;
@@ -39,24 +30,15 @@ export function useMovieDetail(id?: string) {
     if (!id) return;
     setIsLoading(true);
     try {
-      // 1. Movie Details
-      const { data } = await axiosClient.get<MovieDetail>(
-        `/movies/${id}`
-      );
-      setMovie(data);
+      const [movieRes, watchlistRes, ratingRes] = await Promise.all([
+        axiosClient.get<MovieDetail>(`/movies/${id}`),
+        axiosClient.get<{ exists: boolean }>(`/watchlist/${id}/exists`),
+        axiosClient.get<{ rating?: number | null }>(`/ratings/${id}`),
+      ]);
 
-      // 2. Watchlist Status
-      const { data: wl } = await axiosClient.get<WatchlistEntry[]>(
-        `/watchlist`
-      );
-      setIsInWL(wl.some((c) => c.tmdbId === id));
-
-      // 3. User Ratings
-      const { data: ratings } = await axiosClient.get<Rating[]>(
-        `/ratings`
-      );
-      const myRating = ratings.find((r) => r.tmdbId === id)?.rating ?? null;
-      setUserRating(myRating);
+      setMovie(movieRes.data);
+      setIsInWL(Boolean(watchlistRes.data?.exists));
+      setUserRating(ratingRes.data?.rating ?? null);
     } catch (err) {
       console.error("Failed to load movie details", err);
     } finally {

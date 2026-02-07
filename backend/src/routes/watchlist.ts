@@ -18,6 +18,12 @@ export const createWatchlistRouter = (
     res.json(list);
   });
 
+  router.get('/:tmdbId/exists', async (req, res) => {
+    const user = (req as any).user;
+    const exists = await watchlistService.isInWatchlist(user.id, req.params.tmdbId);
+    res.json({ exists });
+  });
+
   router.post('/', async (req, res) => {
     const user = (req as any).user;
     const { tmdbId, type } = req.body;
