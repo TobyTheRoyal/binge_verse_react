@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axiosClient from "../../api/axiosClient";
 import FilterControls from "../FilterControls/FilterControls";
 import styles from "./History.module.scss";
+import { parseRatingScore } from "../../utils/rating";
 
 interface RatedContent {
   tmdbId: string;
@@ -107,7 +108,7 @@ const History: React.FC = () => {
   };
 
   const submitRating = async (tmdbId: string) => {
-    const score = parseFloat(ratingScore);
+    const score = parseRatingScore(ratingScore);
     if (isNaN(score) || score < 0 || score > 10) {
       alert("Score must be 0.0–10.0");
       return;

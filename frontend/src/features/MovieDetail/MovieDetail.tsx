@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useMovieDetail } from "../../hooks/useMovieDetail";
 import styles from "./MovieDetail.module.scss";
 import { providerLogoMap } from "../../constants/providers";
+import { parseRatingScore } from "../../utils/rating";
 
 const MovieDetail: React.FC = () => {
   const { id } = useParams();
@@ -38,7 +39,7 @@ const MovieDetail: React.FC = () => {
   };
 
   const handleSubmitRating = async () => {
-    const score = parseFloat(ratingScore);
+    const score = parseRatingScore(ratingScore);
     if (isNaN(score) || score < 0 || score > 10) {
       alert("Score must be between 0.0 and 10.0");
       return;

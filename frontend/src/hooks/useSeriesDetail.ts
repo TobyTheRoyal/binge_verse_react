@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
+import { parseRatingScore } from "../utils/rating";
 
 interface Actor {
   name: string;
@@ -101,7 +102,7 @@ export function useSeriesDetail(id?: string) {
 
   const submitRating = async () => {
     if (!series) return;
-    const score = parseFloat(ratingScore);
+    const score = parseRatingScore(ratingScore);
     if (isNaN(score) || score < 0 || score > 10) {
       alert("Score must be between 0.0 and 10.0");
       return;

@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import axiosClient from "../api/axiosClient";
 import { useAuth } from "../context/AuthContext";
 import { useFilters, FilterOptions } from "./useFilters";
+import { parseRatingScore } from "../utils/rating";
 
 export interface WatchlistItem {
   tmdbId: string;
@@ -134,7 +135,7 @@ export function useWatchlist() {
     setIsRatingSubmitted(false);
   };
   const submitRating = async (tmdbId: string) => {
-    const score = parseFloat(ratingScore);
+    const score = parseRatingScore(ratingScore);
     if (isNaN(score) || score < 0 || score > 10) {
       alert("Score must be 0.0–10.0");
       return;
@@ -166,8 +167,8 @@ export function useWatchlist() {
         setRatingScore((prev) =>
           prev === "" || prev.endsWith(".") ? prev + e.key : e.key
         );
-        if (parseFloat(ratingScore) > 10) setRatingScore("10");
-      } else if (e.key === ".") {
+        if (parseRatingScore(ratingScore) > 10) setRatingScore("10");
+      } else if (e.key === "." || e.key === ",") {
         if (!ratingScore.includes(".") && ratingScore !== "") {
           setRatingScore((prev) => prev + ".");
         }

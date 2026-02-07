@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import axiosClient from "../api/axiosClient";
 import type { FilterOptions } from "./useFilters";
+import { parseRatingScore } from "../utils/rating";
 
 export interface SeriesItem {
   tmdbId: string;
@@ -74,7 +75,7 @@ export function useSeries(filters?: FilterOptions) {
   };
 
   const submitRating = async (tmdbId: string) => {
-    const score = parseFloat(ratingScore);
+    const score = parseRatingScore(ratingScore);
     if (isNaN(score) || score < 0 || score > 10) {
       alert("Score must be between 0.0 and 10.0");
       return;
@@ -102,8 +103,8 @@ export function useSeries(filters?: FilterOptions) {
 
       if (/[0-9]/.test(e.key)) {
         setRatingScore(prev => (prev === "" || prev.endsWith(".") ? prev + e.key : e.key));
-        if (parseFloat(ratingScore) > 10) setRatingScore("10");
-      } else if (e.key === ".") {
+        if (parseRatingScore(ratingScore) > 10) setRatingScore("10");
+      } else if (e.key === "." || e.key === ",") {
         if (!ratingScore.includes(".") && ratingScore !== "") {
           setRatingScore(prev => prev + ".");
         }

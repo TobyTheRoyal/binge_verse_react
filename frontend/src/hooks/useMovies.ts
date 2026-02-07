@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import axiosClient from "../api/axiosClient";
+import { parseRatingScore } from "../utils/rating";
 
 export interface Movie {
   tmdbId: string;
@@ -146,7 +147,7 @@ export function useMovies() {
     setIsRatingSubmitted(false);
   };
   const submitRating = async (tmdbId: string) => {
-    const score = parseFloat(ratingScore);
+    const score = parseRatingScore(ratingScore);
     if (isNaN(score) || score < 0 || score > 10) {
       alert("Score must be 0.0–10.0");
       return;

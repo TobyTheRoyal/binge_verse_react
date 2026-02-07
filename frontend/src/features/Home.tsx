@@ -7,6 +7,7 @@ import { useWatchlist } from "../hooks/useWatchlist";
 import { useRatings } from '../hooks/useRatings';
 import { useAuth } from "../context/AuthContext";
 import styles from './Home.module.scss';
+import { parseRatingScore } from "../utils/rating";
 
 interface Category {
   id: string;
@@ -183,7 +184,7 @@ const Home: React.FC = () => {
   };
 
   const submitRating = async (tmdbId: string) => {
-    const score = parseFloat(ratingScore);
+    const score = parseRatingScore(ratingScore);
     if (isNaN(score) || score < 0 || score > 10) {
       console.error('Invalid rating');
       return;

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRatings } from "../../hooks/useRatings";
 import styles from "./Rating.module.scss";
+import { parseRatingScore } from "../../utils/rating";
 
 const Rating: React.FC = () => {
   const { ratings, fetchUserRatings, rateContent } = useRatings();
@@ -26,7 +27,7 @@ const Rating: React.FC = () => {
   };
 
   const submitRating = async () => {
-    const score = parseFloat(ratingScore);
+    const score = parseRatingScore(ratingScore);
     if (isNaN(score) || score < 0 || score > 10) {
       alert("Score must be between 0.0 and 10.0");
       return;
